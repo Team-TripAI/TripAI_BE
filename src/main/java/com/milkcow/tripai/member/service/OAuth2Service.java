@@ -51,7 +51,7 @@ public class OAuth2Service {
     /**
      * getGoogleData<p>
      * 프론트엔드로 부터 받은 Google OAuth2 access_token을 바탕으로 회원 정보 조회.
-     * @param token
+     * @param token (프론트엔드로 부터 받은 Google OAuth2 access_token)
      * @return GoogleDataDto
      */
     private GoogleDataDto getGoogleData(String token) {
