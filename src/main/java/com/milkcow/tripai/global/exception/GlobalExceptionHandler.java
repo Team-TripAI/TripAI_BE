@@ -1,6 +1,8 @@
 package com.milkcow.tripai.global.exception;
 
+import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.global.dto.ErrorResponse;
+import com.milkcow.tripai.global.result.ResultProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -48,7 +50,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({GeneralException.class})
     public ResponseEntity<ErrorResponse> handleGeneralException(final GeneralException ex) {
 
-        ApiResult errorResult = ex.getErrorResult();
+        ResultProvider errorResult = ex.getErrorResult();
         log.warn(errorResult.toString() + " Exception occur: ", ex);
         return ResponseEntity.status(errorResult.getStatus())
                 .body(ErrorResponse.create(errorResult));
