@@ -35,7 +35,7 @@ public class OAuth2Service {
      * google OAuth2 로그인 진행
      * 회원가입 되어있지 않은 경우 회원가입 진행
      * @param token (String, accessToken)
-     * @param response
+     * @param response (ResponseDto)
      */
     public ResponseDto oAuth2Login(String token, HttpServletResponse response){
         GoogleDataDto googleData = getGoogleData(token);

@@ -31,7 +31,7 @@ public class OAuth2Controller {
      * 리다이렉트를 통해 authorize code를 얻는다.
      * 이 코드를 통해 accessToken발급 가능.
      * @param code (String, Authorize Code)
-     * @return
+     * @return (String)
      */
     @GetMapping("/test")
     public String testLogin(@RequestParam String code){
