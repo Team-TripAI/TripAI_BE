@@ -1,6 +1,9 @@
 package com.milkcow.tripai.global.dto;
 
-import com.milkcow.tripai.global.exception.ApiResult;
+import com.milkcow.tripai.global.result.ResultProvider;
+
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * API 실패 시 {@code @RestControllerAdvice}에서 공통적으로 반환하는 클래스이다.
@@ -8,19 +11,22 @@ import com.milkcow.tripai.global.exception.ApiResult;
  */
 public class ErrorResponse extends ResponseDto {
 
-    public static ErrorResponse create(ApiResult errorResult) {
+    public static ErrorResponse create(ResultProvider errorResult) {
         return new ErrorResponse(errorResult);
     }
 
-    public static ErrorResponse create(ApiResult errorResult, String message) {
-        return new ErrorResponse(errorResult, message);
+    public static ErrorResponse create(ResultProvider errorResult, String message) {
+        String nonBlankMessage = Optional.ofNullable(message)
+                .filter(Predicate.not(String::isBlank))
+                .orElse(errorResult.getMessage());
+        return new ErrorResponse(errorResult, nonBlankMessage);
     }
 
-    private ErrorResponse(ApiResult errorResult) {
+    private ErrorResponse(ResultProvider errorResult) {
         super(errorResult.getCode(), false, errorResult.getMessage());
     }
 
-    private ErrorResponse(ApiResult errorResult, String message) {
-        super(errorResult.getCode(), false, errorResult.getMessage(message));
+    private ErrorResponse(ResultProvider errorResult, String message) {
+        super(errorResult.getCode(), false, message);
     }
 }

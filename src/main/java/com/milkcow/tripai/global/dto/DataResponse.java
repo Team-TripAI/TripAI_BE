@@ -1,6 +1,7 @@
 package com.milkcow.tripai.global.dto;
 
-import com.milkcow.tripai.global.exception.ApiResult;
+import com.milkcow.tripai.global.result.ApiResult;
+import com.milkcow.tripai.global.result.ResultProvider;
 import lombok.Getter;
 
 /**
@@ -22,7 +23,7 @@ public class DataResponse<T> extends ResponseDto {
         return new DataResponse<>(data, message);
     }
 
-    public static <T> DataResponse<T> create(T data, ApiResult result) {
+    public static <T> DataResponse<T> create(T data, ResultProvider result) {
         return new DataResponse<>(data, result);
     }
 
@@ -40,7 +41,7 @@ public class DataResponse<T> extends ResponseDto {
         this.data = data;
     }
 
-    private DataResponse(T data, ApiResult result) {
+    private DataResponse(T data, ResultProvider result) {
         super(result.getCode(), true, result.getMessage());
         this.data = data;
     }
