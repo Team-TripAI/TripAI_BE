@@ -1,5 +1,6 @@
 package com.milkcow.tripai.member.controller;
 
+import com.milkcow.tripai.global.dto.ResponseDto;
 import com.milkcow.tripai.member.dto.GoogleLoginDto;
 import com.milkcow.tripai.member.service.OAuth2Service;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,17 @@ public class OAuth2Controller {
      */
     @PostMapping("/login/google")
     @ResponseStatus(HttpStatus.OK)
-    public void googleLogin(@RequestBody GoogleLoginDto loginDto, HttpServletResponse response) {
-        oAuth2Service.oAuth2Login(loginDto.getToken(), response);
+    public ResponseDto googleLogin(@RequestBody GoogleLoginDto loginDto, HttpServletResponse response) {
+        return oAuth2Service.oAuth2Login(loginDto.getToken(), response);
     }
+
+    /**
+     * !!! 프론트엔드 완성 전까지만 있을 예정!!!
+     * 리다이렉트를 통해 authorize code를 얻는다.
+     * 이 코드를 통해 accessToken발급 가능.
+     * @param code (String, Authorize Code)
+     * @return
+     */
     @GetMapping("/test")
     public String testLogin(@RequestParam String code){
         System.out.println("code = " + code);
