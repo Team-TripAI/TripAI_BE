@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Member implements UserDetails {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
