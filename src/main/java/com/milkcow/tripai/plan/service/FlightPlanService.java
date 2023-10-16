@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.milkcow.tripai.global.exception.GeneralException;
+import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.plan.dto.FlightData;
 import com.milkcow.tripai.plan.dto.FlightDataDto;
+import com.milkcow.tripai.plan.exception.PlanException;
+import com.milkcow.tripai.plan.result.PlanResult;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.http.*;
@@ -45,8 +49,7 @@ public class FlightPlanService {
             // 첫번째 POST요청
             ResponseEntity<JSONObject> firstResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, JSONObject.class);
             if (firstResponse.getStatusCode() != HttpStatus.OK) {
-                //추후 예외처리 예정
-                throw new RuntimeException("Error status code -1: " + firstResponse.getStatusCodeValue());
+                throw new PlanException(PlanResult.FLIGHT_API_REQUEST_FAILED);
             }
 
             // 두번째 요청을 수행하기 위한 0.5초 휴식
@@ -66,8 +69,7 @@ public class FlightPlanService {
             ResponseEntity<String> secondResponse = restTemplate.exchange(url, HttpMethod.POST, secondRequestEntity, String.class);
 
             if (secondResponse.getStatusCode() != HttpStatus.OK) {
-                //추후 처리 예정
-                throw new RuntimeException("Error status code -2: " + secondResponse.getStatusCodeValue());
+                throw new PlanException(PlanResult.FLIGHT_API_REQUEST_FAILED);
             }
 
             String secondResponseBody = secondResponse.getBody();
@@ -75,8 +77,7 @@ public class FlightPlanService {
 
             JsonNode jsonResults = jsonNode.path("data").path("internationalList").get("results");
             if (jsonResults.get("schedules").isEmpty()){
-                //추후 처리 예정
-                throw new RuntimeException("Response is Empty");
+                throw new PlanException(PlanResult.FLIGHT_API_RESPONSE_EMPTY);
             }
 
             JsonNode schedules = jsonResults.path("schedules").get(0);
@@ -89,7 +90,7 @@ public class FlightPlanService {
                 }
             }
             else{
-                throw new RuntimeException("스케줄이랑 돈이랑 다른데오?");
+                throw new PlanException(PlanResult.FLIGHT_API_RESPONSE_INVALID);
             }
 
             return FlightDataDto.builder()
@@ -97,12 +98,8 @@ public class FlightPlanService {
                     .flightDataList(flightDataList)
                     .build();
 
-        }catch (JsonProcessingException e){
-            //추후 에러 변환 예정
-            throw new RuntimeException();
-        } catch (InterruptedException e) {
-            // sleep중 에러
-            throw new RuntimeException(e);
+        }catch (JsonProcessingException | InterruptedException e){
+            throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         }
     }
 
