@@ -76,21 +76,25 @@ public class FlightPlanService {
             JsonNode jsonNode = objectMapper.readTree(secondResponseBody);
 
             JsonNode jsonResults = jsonNode.path("data").path("internationalList").get("results");
+            // API응답이 비어있는 경우
             if (jsonResults.get("schedules").isEmpty()){
                 throw new PlanException(PlanResult.FLIGHT_API_RESPONSE_EMPTY);
             }
 
-            JsonNode schedules = jsonResults.path("schedules").get(0);
-            JsonNode fares = jsonResults.path("fares");
+            JsonNode schedules = jsonResults.path("schedules").get(0);  //항공 스케줄
+            JsonNode fares = jsonResults.path("fares"); //항공권별 가격
 
             if (schedules.size() == fares.size()) {
                 for (JsonNode scheduleItem : schedules) {
+                    //JSON으로부터 개별 항공권 데이터 반환
                     FlightData flightData = parseFlightData(departureAirport, arrivalAirport, departureDate, fares, scheduleItem);
+                    // 최대 가격보다 작은경우 저장
                     if(flightData.getFare() <= maxFare)
                         flightDataList.add(flightData);
                 }
             }
             else{
+                // 항공 스케줄과 가격개수가 일치하지 않는 경우
                 throw new PlanException(PlanResult.FLIGHT_API_RESPONSE_INVALID);
             }
 
