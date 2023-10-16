@@ -10,6 +10,7 @@ public class FlightData {
     private String departureAirport;
     private String arrivalAirport;
     private String departureDate;
+    private String arrivalDate;
     private String airline;
     private String departureTime;
     private String arrivalTime;
@@ -22,6 +23,7 @@ public class FlightData {
                 ", departureAirport='" + departureAirport + '\'' +
                 ", arrivalAirport='" + arrivalAirport + '\'' +
                 ", departureDate='" + departureDate + '\'' +
+                ", arrivalDate='" + arrivalDate + '\'' +
                 ", airline='" + airline + '\'' +
                 ", departureTime='" + departureTime + '\'' +
                 ", arrivalTime='" + arrivalTime + '\'' +
