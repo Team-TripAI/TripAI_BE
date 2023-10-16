@@ -4,6 +4,7 @@ import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.global.dto.ErrorResponse;
 import com.milkcow.tripai.global.result.ResultProvider;
 import com.milkcow.tripai.member.exception.OAuth2Exception;
+import com.milkcow.tripai.plan.exception.PlanException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -49,7 +50,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({GeneralException.class,
-                        OAuth2Exception.class})
+                        OAuth2Exception.class,
+                        PlanException.class})
     public ResponseEntity<ErrorResponse> handleGeneralException(final GeneralException ex) {
 
         ResultProvider errorResult = ex.getErrorResult();
