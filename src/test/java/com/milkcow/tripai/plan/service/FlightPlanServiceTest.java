@@ -15,7 +15,7 @@ class FlightPlanServiceTest {
     public void 항공권_조회() throws Exception{
         //given
         //when
-        FlightDataDto flightData = flightPlanService.getFlightData("ICN", "LAX", "20231225");
+        FlightDataDto flightData = flightPlanService.getFlightData("ICN", "LAX", "20231225", 2000000);
         //then
         System.out.println("flightData.getFlightDataList() = " + flightData.getFlightDataList());
         Assertions.assertThat(flightData.getFlightCount()).isPositive();

@@ -32,7 +32,7 @@ public class FlightPlanService {
      * @param departureDate (출발일)
      * @return @see FlightDataDto
      */
-    public FlightDataDto getFlightData(String departureAirport, String arrivalAirport, String departureDate){
+    public FlightDataDto getFlightData(String departureAirport, String arrivalAirport, String departureDate, int maxFare){
         try{
             ArrayList<FlightData> flightDataList = new ArrayList<>();
             RestTemplate restTemplate = new RestTemplate();
@@ -86,7 +86,8 @@ public class FlightPlanService {
             if (schedules.size() == fares.size()) {
                 for (JsonNode scheduleItem : schedules) {
                     FlightData flightData = parseFlightData(departureAirport, arrivalAirport, departureDate, fares, scheduleItem);
-                    flightDataList.add(flightData);
+                    if(flightData.getFare() <= maxFare)
+                        flightDataList.add(flightData);
                 }
             }
             else{
