@@ -49,10 +49,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ErrorResponse.create(ApiResult.BAD_REQUEST, errorList.toString()));
     }
 
-    @ExceptionHandler({GeneralException.class,
-                        OAuth2Exception.class,
-                        PlanException.class})
+    @ExceptionHandler({GeneralException.class})
     public ResponseEntity<ErrorResponse> handleGeneralException(final GeneralException ex) {
+
+        ResultProvider errorResult = ex.getErrorResult();
+        log.warn(errorResult.toString() + " Exception occur: ", ex);
+        return ResponseEntity.status(errorResult.getStatus())
+                .body(ErrorResponse.create(errorResult));
+    }
+
+    @ExceptionHandler({OAuth2Exception.class})
+    public ResponseEntity<ErrorResponse> handleGeneralException(final OAuth2Exception ex) {
+
+        ResultProvider errorResult = ex.getErrorResult();
+        log.warn(errorResult.toString() + " Exception occur: ", ex);
+        return ResponseEntity.status(errorResult.getStatus())
+                .body(ErrorResponse.create(errorResult));
+    }
+
+    @ExceptionHandler({PlanException.class})
+    public ResponseEntity<ErrorResponse> handleGeneralException(final PlanException ex) {
 
         ResultProvider errorResult = ex.getErrorResult();
         log.warn(errorResult.toString() + " Exception occur: ", ex);
