@@ -123,12 +123,14 @@ public class FlightPlanService {
 
         String airline = scheduleItem.get("detail").get(0).get("av").asText();
         String departureTime = scheduleItem.get("detail").get(0).get("sdt").asText().substring(8);
+        String arrivalDate = scheduleItem.get("detail").get(0).get("edt").asText().substring(0,8);
         String arrivalTime = scheduleItem.get("detail").get(0).get("edt").asText().substring(8);
         return FlightData.builder()
                 .id(key)
                 .departureAirport(departureAirport)
                 .arrivalAirport(arrivalAirport)
                 .departureDate(departureDate)
+                .arrivalDate(arrivalDate)
                 .airline(airline)
                 .departureTime(departureTime)
                 .arrivalTime(arrivalTime)
