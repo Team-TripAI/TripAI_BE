@@ -1,6 +1,7 @@
 package com.milkcow.tripai.member.exception;
 
 import com.milkcow.tripai.global.exception.ErrorResultAccessor;
+import com.milkcow.tripai.global.result.ResultProvider;
 import com.milkcow.tripai.member.result.OAuth2Result;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,5 +13,10 @@ import lombok.RequiredArgsConstructor;
  * GlobalExceptionHandler에 의해 처리
  */
 public class OAuth2Exception extends RuntimeException implements ErrorResultAccessor {
-    private final OAuth2Result errorResult;
+    private final OAuth2Result oAuth2Result;
+
+    @Override
+    public ResultProvider getErrorResult() {
+        return this.oAuth2Result;
+    }
 }
