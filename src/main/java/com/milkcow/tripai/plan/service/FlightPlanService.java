@@ -123,7 +123,7 @@ public class FlightPlanService {
         String airline = scheduleItem.get("detail").get(0).get("av").asText();
         String departureTime = scheduleItem.get("detail").get(0).get("sdt").asText().substring(8);
         String arrivalTime = scheduleItem.get("detail").get(0).get("edt").asText().substring(8);
-        FlightData flightData = FlightData.builder()
+        return FlightData.builder()
                 .id(key)
                 .departureAirport(departureAirport)
                 .arrivalAirport(arrivalAirport)
@@ -133,7 +133,6 @@ public class FlightPlanService {
                 .arrivalTime(arrivalTime)
                 .fare(fareSum)
                 .build();
-        return flightData;
     }
 
     /**
