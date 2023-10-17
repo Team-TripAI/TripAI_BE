@@ -13,7 +13,6 @@ import com.milkcow.tripai.member.repository.MemberRepository;
 import com.milkcow.tripai.member.result.OAuth2Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,12 +79,6 @@ public class OAuth2Service {
                             + token,
                     String.class
             );
-            HttpStatus statusCode = responseEntity.getStatusCode();
-
-            // 유효하지 않은 토큰인 경우
-            if(statusCode.is4xxClientError()){
-                throw new OAuth2Exception(OAuth2Result.INVALID_ACCESS_TOKEN);
-            }
 
             String responseBody = responseEntity.getBody();
             ObjectMapper objectMapper = new ObjectMapper();
@@ -95,7 +89,11 @@ public class OAuth2Service {
             String email = jsonNode.get("email").asText();
             return new GoogleDataDto(nickname, email);
         } catch (RestClientException e){
-            throw new OAuth2Exception(OAuth2Result.FAIL_TO_ACCESS_GOOGLE_API);
+            //유효하지 않은 토큰의 경우
+            if(Objects.requireNonNull(e.getMessage()).startsWith("401"))
+                throw new OAuth2Exception(OAuth2Result.INVALID_ACCESS_TOKEN);
+            else
+                throw new OAuth2Exception(OAuth2Result.FAIL_TO_ACCESS_GOOGLE_API);
         } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         }
