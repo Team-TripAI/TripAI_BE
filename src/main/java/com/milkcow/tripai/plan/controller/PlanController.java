@@ -19,7 +19,7 @@ public class PlanController {
     public DataResponse<FlightDataDto> getFlightPlan(@RequestParam String departureAirport,
                                                      @RequestParam String arrivalAirport,
                                                      @RequestParam String departure,
-                                                     @RequestParam int maxFare){
+                                                     @RequestParam(defaultValue = "0x7fffffff") int maxFare){
         FlightDataDto flightData = flightPlanService.getFlightData(departureAirport, arrivalAirport, departure, maxFare);
         return DataResponse.create(flightData, PlanResult.OK_FLIGHT_PLAN);
     }

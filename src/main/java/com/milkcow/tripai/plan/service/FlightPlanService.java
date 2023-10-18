@@ -11,7 +11,6 @@ import com.milkcow.tripai.plan.dto.FlightData;
 import com.milkcow.tripai.plan.dto.FlightDataDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanResult;
-import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 
 @Service
-@RequiredArgsConstructor
 public class FlightPlanService {
     private static final String url = "https://airline-api.naver.com/graphql";
     private static final ObjectMapper objectMapper = new ObjectMapper();
