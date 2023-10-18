@@ -1,6 +1,7 @@
 package com.milkcow.tripai.member.service;
 
 import com.milkcow.tripai.member.domain.Member;
+import com.milkcow.tripai.member.exception.OAuth2Exception;
 import com.milkcow.tripai.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,15 @@ class OAuth2ServiceTest {
         oAuth2Service.oAuth2Login(token, null);
         oAuth2Service.oAuth2Login(token, null);
         //when
+        //then
+    }
+
+    @Test
+    public void 구글_유효하지않은토큰() throws Exception{
+        //given
+        //when
+        OAuth2Exception oAuth2Exception = org.junit.jupiter.api.Assertions.assertThrows(OAuth2Exception.class, () -> oAuth2Service.oAuth2Login(token, null));
+        Assertions.assertThat(oAuth2Exception.getErrorResult().getCode()).isEqualTo(413);
         //then
     }
 }
