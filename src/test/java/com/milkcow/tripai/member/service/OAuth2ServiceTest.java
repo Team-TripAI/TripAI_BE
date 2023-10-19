@@ -41,7 +41,7 @@ class OAuth2ServiceTest {
     public void 구글_유효하지않은토큰() throws Exception{
         //given
         //when
-        OAuth2Exception oAuth2Exception = org.junit.jupiter.api.Assertions.assertThrows(OAuth2Exception.class, () -> oAuth2Service.oAuth2Login(token, null));
+        OAuth2Exception oAuth2Exception = org.junit.jupiter.api.Assertions.assertThrows(OAuth2Exception.class, () -> oAuth2Service.oAuth2Login("abcd", null));
         Assertions.assertThat(oAuth2Exception.getErrorResult().getCode()).isEqualTo(413);
         //then
     }
