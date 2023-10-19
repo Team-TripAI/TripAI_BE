@@ -41,7 +41,7 @@ class OAuth2ControllerTest {
     public void 구글로그인_컨트롤러() throws Exception{
         //given
         final String url = "/login/google";
-        String token = "ya29.a0AfB_byAvWoXXmdpVxNj9vNLKEVkkOZHImyRzZ5AXLFeM3D8-x8ApYywcfIhZflh0bBcsfYrRw2qAWHIgm9VxmqSWB3krkdRuHUvDQl6xd_3k5AL-hiMYxp-gf34ohH2bxuhL6MnnhMmiyWL85sweQVWIUTqvyeQIe_4aCgYKAQ4SARASFQGOcNnCQqJyUb0kdhhiWvpSv6qpcQ0170";
+        String token = "accessToken";
         GoogleLoginDto loginDto = new GoogleLoginDto(token);
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(loginDto);
