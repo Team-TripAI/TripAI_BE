@@ -32,7 +32,7 @@ public class ArticleService {
             throw new ArticleException(ArticleResult.NULL_USER_ENTITY);
         }
 
-        Article article = request.toArticle();
+        Article article = Article.createArticle(request, member);
         Image image = request.toImage();
 
         Article savedArticle = articleRepository.save(article);

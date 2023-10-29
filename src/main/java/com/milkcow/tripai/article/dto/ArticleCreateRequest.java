@@ -47,16 +47,6 @@ public class ArticleCreateRequest {
     @NotNull
     private final List<String> colorList;
 
-    public final Article toArticle() {
-        return Article.builder()
-                .title(title)
-                .content(content)
-                .locationName(locationName)
-                .formattedAddress(formattedAddress)
-                .image(image)
-                .build();
-    }
-
     public final Image toImage() {
         assert labelList != null;
         assert colorList != null;

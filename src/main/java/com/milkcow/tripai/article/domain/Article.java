@@ -1,5 +1,6 @@
 package com.milkcow.tripai.article.domain;
 
+import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +49,20 @@ public class Article {
     @Column
     private LocalDateTime modifyDate;
 
+    // 엔티티 생성 메서드
+    public static Article createArticle(ArticleCreateRequest request, Member member) {
+
+        return Article.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .locationName(request.getLocationName())
+                .formattedAddress(request.getFormattedAddress())
+                .image(request.getImage())
+                .member(member)
+                .build();
+    }
+
+    // 엔티티 수정 메서드
     public void updateArticle(String title, String content, String locationName, String formattedAddress,
                               String image) {
         this.title = title;
