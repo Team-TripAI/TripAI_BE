@@ -59,17 +59,11 @@ public class ArticleService {
     @Transactional
     public ArticleModifyResponse modifyArticle(Long articleId, ArticleModifyRequest request, Member member) {
 
-        if (member == null) {
-            throw new ArticleException(ArticleResult.NULL_USER_ENTITY);
-        }
-
         final Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new ArticleException(ArticleResult.ARTICLE_NOT_FOUND)
         );
 
-        if (!member.equals(article.getMember())) {
-            throw new ArticleException(ArticleResult.NOT_ARTICLE_OWNER);
-        }
+        checkOwner(member, article);
 
         final Image image = imageRepository.findByImage(request.getImage()).orElseThrow(
                 () -> new ImageException(ImageResult.IMAGE_NOT_FOUND)
@@ -82,5 +76,28 @@ public class ArticleService {
                 request.getLabelList(), request.getColorList());
 
         return ArticleModifyResponse.from(article.getId());
+    }
+
+
+    @Transactional
+    public void removeArticle(Long articleId, Member member) {
+
+        final Article article = articleRepository.findById(articleId).orElseThrow(
+            () -> new ArticleException(ArticleResult.ARTICLE_NOT_FOUND)
+        );
+
+        checkOwner(member, article);
+
+        articleRepository.deleteById(articleId);
+    }
+
+    private void checkOwner(Member member, Article article) {
+        if (member == null) {
+            throw new ArticleException(ArticleResult.NULL_USER_ENTITY);
+        }
+
+        if (!member.equals(article.getMember())) {
+            throw new ArticleException(ArticleResult.NOT_ARTICLE_OWNER);
+        }
     }
 }

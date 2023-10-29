@@ -248,6 +248,20 @@ public class ArticleControllerTest {
         resultActions.andExpect(status().isOk());
     }
 
+    @Test
+    public void 게시글삭제성공() throws Exception {
+        // given
+        final String url = "/article/-1";
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(url)
+        );
+
+        // then
+        resultActions.andExpect(status().isNoContent());
+    }
+
     private static Stream<Arguments> invalidArticleParameter() {
         List<String> labelList = new ArrayList<>();
         labelList.add("Water");

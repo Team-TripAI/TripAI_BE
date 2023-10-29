@@ -109,6 +109,21 @@ public class ArticleRepositoryTest {
         assertThat(result.getModifyDate()).isNotNull();
     }
 
+    @Test
+    public void 게시글추가후삭제() {
+        // given
+        final Member member = getMember();
+        final Article article = getArticle(member);
+        memberRepository.save(member);
+
+        final Article savedArticle = articleRepository.save(article);
+
+        // when
+        articleRepository.deleteById(savedArticle.getId());
+
+        // then
+    }
+
     private Member getMember() {
         return Member.builder()
                 .email("abcdef@gmail.com")

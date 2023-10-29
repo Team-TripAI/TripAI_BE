@@ -58,4 +58,15 @@ public class ArticleController {
 
         return DataResponse.create(response);
     }
+
+    @DeleteMapping("/{articleId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public DataResponse<Void> remove(@PathVariable Long articleId) {
+        // TODO - @AuthenticationPrincipal 로 대체
+        Member member = Member.builder().build();
+
+        articleService.removeArticle(articleId, member);
+
+        return DataResponse.empty();
+    }
 }

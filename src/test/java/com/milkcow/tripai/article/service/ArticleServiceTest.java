@@ -154,6 +154,7 @@ public class ArticleServiceTest {
     public void 게시글수정실패_MEMBER가NULL임() {
         // given
         ArticleModifyRequest request = getArticleModifyRequest();
+        doReturn(Optional.of(Article.builder().build())).when(articleRepository).findById(anyLong());
 
         // when
         final ArticleException result = assertThrows(ArticleException.class,
@@ -193,6 +194,59 @@ public class ArticleServiceTest {
         // then
         assertThat(result.getArticleId()).isNotNull();
     }
+
+    @Test
+    public void 게시글삭제실패_MEMBER가NULL임() {
+        // given
+        doReturn(Optional.of(Article.builder().build())).when(articleRepository).findById(anyLong());
+
+        // when
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.removeArticle(-1L, null));
+
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NULL_USER_ENTITY);
+    }
+
+    @Test
+    public void 게시글삭제실패_게시글이존재하지않음() {
+        // given
+        doReturn(Optional.empty()).when(articleRepository).findById(anyLong());
+        Member member = getMember(-1L);
+
+        // when
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.removeArticle(-1L, member));
+
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(ArticleResult.ARTICLE_NOT_FOUND);
+    }
+
+    @Test
+    public void 게시글삭제실패_작성자가아님() {
+        // given
+        Member member1 = getMember(-1L);
+        Member member2 = getMember(-2L);
+        doReturn(Optional.of(getArticle(member1))).when(articleRepository).findById(anyLong());
+
+        // when
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.removeArticle(-1L, member2));
+
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NOT_ARTICLE_OWNER);
+    }
+
+    @Test
+    public void 게시글삭제성공() {
+        // given
+        Member member = getMember(-1L);
+        doReturn(Optional.of(getArticle(member))).when(articleRepository).findById(anyLong());
+
+        // when
+        target.removeArticle(-1L, member);
+
+        // then
+    }
+
+
 
     private ArticleModifyRequest getArticleModifyRequest() {
         List<String> labelList = getLabelList();
