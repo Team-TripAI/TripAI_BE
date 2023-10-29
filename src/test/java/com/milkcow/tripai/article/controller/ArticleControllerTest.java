@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.article.dto.ArticleCreateResponse;
+import com.milkcow.tripai.article.dto.ArticleDetailResponse;
 import com.milkcow.tripai.article.dto.ArticlePageResponse;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.result.ArticleResult;
@@ -173,6 +174,21 @@ public class ArticleControllerTest {
         final ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
                         .params(requestParam)
+        );
+
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void 게시글상세조회성공() throws Exception {
+        // given
+        final String url = "/article/-1";
+        doReturn(ArticleDetailResponse.builder().build()).when(articleService).getArticle(-1L);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
         );
 
         // then

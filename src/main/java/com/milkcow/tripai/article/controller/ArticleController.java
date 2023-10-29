@@ -2,6 +2,7 @@ package com.milkcow.tripai.article.controller;
 
 import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.article.dto.ArticleCreateResponse;
+import com.milkcow.tripai.article.dto.ArticleDetailResponse;
 import com.milkcow.tripai.article.dto.ArticlePageResponse;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.article.service.ArticleService;
@@ -39,6 +40,13 @@ public class ArticleController {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDate").descending());
 
         ArticlePageResponse response = articleService.getArticlePage(pageRequest);
+
+        return DataResponse.create(response);
+    }
+
+    @GetMapping("/{articleId}")
+    public DataResponse<ArticleDetailResponse> getDetail(@PathVariable Long articleId) {
+        ArticleDetailResponse response = articleService.getArticle(articleId);
 
         return DataResponse.create(response);
     }

@@ -3,6 +3,7 @@ package com.milkcow.tripai.article.service;
 import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.article.dto.ArticleCreateResponse;
+import com.milkcow.tripai.article.dto.ArticleDetailResponse;
 import com.milkcow.tripai.article.dto.ArticlePageResponse;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.repository.ArticleRepository;
@@ -40,8 +41,16 @@ public class ArticleService {
 
     public ArticlePageResponse getArticlePage(PageRequest pageRequest) {
 
-        final Page<Article> foundArticle = articleRepository.findAll(pageRequest);
+        final Page<Article> articlePage = articleRepository.findAll(pageRequest);
 
-        return ArticlePageResponse.from(foundArticle);
+        return ArticlePageResponse.from(articlePage);
+    }
+
+    public ArticleDetailResponse getArticle(Long id) {
+
+        final Article article = articleRepository.findById(id).orElseThrow(
+                () -> new ArticleException(ArticleResult.ARTICLE_NOT_FOUND));
+
+        return ArticleDetailResponse.from(article);
     }
 }

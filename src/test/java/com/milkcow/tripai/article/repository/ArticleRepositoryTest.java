@@ -76,6 +76,39 @@ public class ArticleRepositoryTest {
         assertThat(result.getTotalElements()).isEqualTo(2);
     }
 
+    @Test
+    public void 게시글상세조회() {
+        // given
+        final Member member = getMember();
+        memberRepository.save(member);
+        memberRepository.flush();
+
+        final Article article = Article.builder()
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .member(member)
+                .locationName("장소명")
+                .formattedAddress("주소")
+                .image("36b8f84d-df4e-4d49-b662-bcde71a8764f")
+                .build();
+
+        // when
+        Long id = articleRepository.save(article).getId();
+        final Article result = articleRepository.findById(id).get();
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getTitle()).isEqualTo("게시글 제목");
+        assertThat(result.getContent()).isEqualTo("게시글 내용");
+        assertThat(result.getImage()).isEqualTo("36b8f84d-df4e-4d49-b662-bcde71a8764f");
+        assertThat(result.getLocationName()).isEqualTo("장소명");
+        assertThat(result.getFormattedAddress()).isEqualTo("주소");
+        assertThat(result.getMember()).isEqualTo(member);
+        assertThat(result.getCreateDate()).isNotNull();
+        assertThat(result.getModifyDate()).isNotNull();
+    }
+
     private Member getMember() {
         return Member.builder()
                 .email("abcdef@gmail.com")

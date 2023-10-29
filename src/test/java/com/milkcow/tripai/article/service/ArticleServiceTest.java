@@ -3,6 +3,7 @@ package com.milkcow.tripai.article.service;
 import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.article.dto.ArticleCreateResponse;
+import com.milkcow.tripai.article.dto.ArticleDetailResponse;
 import com.milkcow.tripai.article.dto.ArticlePageResponse;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.repository.ArticleRepository;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,10 +59,10 @@ public class ArticleServiceTest {
     @Test
     public void 게시글작성성공() {
         // given
-        doReturn(getArticle()).when(articleRepository).save(any(Article.class));
-
         ArticleCreateRequest articleCreateRequest = getArticleCreateRequest();
         final Member member = getMember();
+
+        doReturn(getArticle(member)).when(articleRepository).save(any(Article.class));
 
         // when
         final ArticleCreateResponse result = target.createArticle(articleCreateRequest, member);
@@ -93,6 +95,31 @@ public class ArticleServiceTest {
         assertThat(result.getTotalElements()).isEqualTo(3);
     }
 
+    @Test
+    public void 게시글상세조회실패_존재하지않음() {
+        // given
+        doReturn(Optional.empty()).when(articleRepository).findById(anyLong());
+
+        // when
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.getArticle(-1L));
+
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(ArticleResult.ARTICLE_NOT_FOUND);
+    }
+
+    @Test
+    public void 게시글상세조회성공() {
+        // given
+        Member member = getMember();
+        doReturn(Optional.of(getArticle(member))).when(articleRepository).findById(anyLong());
+
+        // when
+        final ArticleDetailResponse result = target.getArticle(-1L);
+
+        // then
+        assertThat(result.getArticleId()).isNotNull();
+    }
+
     private ArticleCreateRequest getArticleCreateRequest() {
         List<String> labelList = new ArrayList<>();
         labelList.add("Water");
@@ -121,11 +148,12 @@ public class ArticleServiceTest {
                 .build();
     }
 
-    private Article getArticle() {
+    private Article getArticle(Member member) {
         return Article.builder()
                 .id(-1L)
                 .title("게시글 제목")
                 .content("내용")
+                .member(member)
                 .locationName("장소명")
                 .formattedAddress("주소")
                 .image("36b8f84d-df4e-4d49-b662-bcde71a8764f")
