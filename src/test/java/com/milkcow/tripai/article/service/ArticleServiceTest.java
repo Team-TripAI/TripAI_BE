@@ -3,6 +3,7 @@ package com.milkcow.tripai.article.service;
 import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.article.dto.ArticleCreateResponse;
+import com.milkcow.tripai.article.dto.ArticlePageResponse;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.repository.ArticleRepository;
 import com.milkcow.tripai.article.result.ArticleResult;
@@ -14,8 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,11 +60,7 @@ public class ArticleServiceTest {
         doReturn(getArticle()).when(articleRepository).save(any(Article.class));
 
         ArticleCreateRequest articleCreateRequest = getArticleCreateRequest();
-        final Member member = Member.builder()
-                .id(1L)
-                .email("abcdef@gmail.com")
-                .nickname("닉네임")
-                .build();
+        final Member member = getMember();
 
         // when
         final ArticleCreateResponse result = target.createArticle(articleCreateRequest, member);
@@ -69,6 +71,26 @@ public class ArticleServiceTest {
         // verify
         verify(articleRepository, times(1)).save(any(Article.class));
         verify(imageRepository, times(1)).save(any(Image.class));
+    }
+
+    @Test
+    public void 게시글목록조회성공_사이즈가3() {
+        // given
+        final PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createDate").descending());
+        final Member member = getMember();
+        Page<Article> pages = new PageImpl<>(Arrays.asList(
+                Article.builder().member(member).build(),
+                Article.builder().member(member).build(),
+                Article.builder().member(member).build()
+        ), pageRequest, 3);
+        doReturn(pages).when(articleRepository).findAll(pageRequest);
+
+        // when
+        final ArticlePageResponse result = target.getArticlePage(pageRequest);
+
+        // then
+        assertThat(result.getArticleList().size()).isEqualTo(3);
+        assertThat(result.getTotalElements()).isEqualTo(3);
     }
 
     private ArticleCreateRequest getArticleCreateRequest() {
@@ -107,6 +129,14 @@ public class ArticleServiceTest {
                 .locationName("장소명")
                 .formattedAddress("주소")
                 .image("36b8f84d-df4e-4d49-b662-bcde71a8764f")
+                .build();
+    }
+
+    private Member getMember() {
+        return Member.builder()
+                .id(1L)
+                .email("abcdef@gmail.com")
+                .nickname("닉네임")
                 .build();
     }
 }

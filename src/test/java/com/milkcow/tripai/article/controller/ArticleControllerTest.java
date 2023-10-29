@@ -1,8 +1,10 @@
 package com.milkcow.tripai.article.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.article.dto.ArticleCreateResponse;
+import com.milkcow.tripai.article.dto.ArticlePageResponse;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.article.service.ArticleService;
@@ -18,14 +20,21 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -114,6 +123,62 @@ public class ArticleControllerTest {
         resultActions.andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void 게시글작성성공() throws Exception {
+        // given
+        final String url = "/article";
+        final ArticleCreateResponse articleCreateResponse = ArticleCreateResponse.from(1L);
+
+        doReturn(articleCreateResponse).when(articleService)
+                .createArticle(any(ArticleCreateRequest.class), any(Member.class));
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(getArticleCreateRequest()))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isCreated());
+
+        DataResponse response = objectMapper.readValue(resultActions.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8), DataResponse.class);
+
+        assertThat(response.getCode()).isEqualTo(201);
+        assertThat(response.getSuccess()).isEqualTo(true);
+    }
+
+    @Test
+    public void 게시글목록조회성공() throws Exception {
+        // given
+        final String url = "/article";
+        final PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createDate").descending());
+
+        final Member member = Member.builder().id(1L).nickname("닉네임").build();
+        Page<Article> pages = new PageImpl<>(Arrays.asList(
+                Article.builder().member(member).build(),
+                Article.builder().member(member).build(),
+                Article.builder().member(member).build()
+        ), pageRequest, 3);
+
+        doReturn(ArticlePageResponse.from(pages)).when(articleService).getArticlePage(pageRequest);
+
+        // when
+        MultiValueMap<String, String> requestParam = new LinkedMultiValueMap<>();
+        requestParam.set("pageNumber", "0");
+        requestParam.set("pageSize", "10");
+
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .params(requestParam)
+        );
+
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
     private static Stream<Arguments> invalidArticleCreateParameter() {
         List<String> labelList = new ArrayList<>();
         labelList.add("Water");
@@ -164,33 +229,6 @@ public class ArticleControllerTest {
                 Arguments.of("제목", "내".repeat(500 + 1), "주소", "장소명",
                         "36b8f84d-df4e-4d49-b662-bcde71a8764f", 38.2252707, 128.5883593, labelList, colorList)
         );
-    }
-
-    @Test
-    public void 게시글작성성공() throws Exception {
-        // given
-        final String url = "/article";
-        final ArticleCreateResponse articleCreateResponse = ArticleCreateResponse.from(1L);
-
-        doReturn(articleCreateResponse).when(articleService)
-                .createArticle(any(ArticleCreateRequest.class), any(Member.class));
-
-        // when
-        final ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(getArticleCreateRequest()))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        // then
-        resultActions.andExpect(status().isCreated());
-
-        DataResponse response = objectMapper.readValue(resultActions.andReturn()
-                .getResponse()
-                .getContentAsString(StandardCharsets.UTF_8), DataResponse.class);
-
-        assertThat(response.getCode()).isEqualTo(201);
-        assertThat(response.getSuccess()).isEqualTo(true);
     }
 
     private ArticleCreateRequest getArticleCreateRequest() {

@@ -7,6 +7,9 @@ import com.milkcow.tripai.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,13 +24,67 @@ public class ArticleRepositoryTest {
     @Test
     public void 게시글작성() {
         // given
-        final Member member = Member.builder()
-                .id(1L)
+        final Member member = getMember();
+        memberRepository.save(member);
+        memberRepository.flush();
+
+        final Article article = getArticle(member);
+
+        // when
+        final Article result = articleRepository.save(article);
+
+        // then
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getTitle()).isEqualTo("게시글 제목");
+        assertThat(result.getContent()).isEqualTo("게시글 내용");
+        assertThat(result.getImage()).isEqualTo("36b8f84d-df4e-4d49-b662-bcde71a8764f");
+        assertThat(result.getLocationName()).isEqualTo("장소명");
+        assertThat(result.getFormattedAddress()).isEqualTo("주소");
+        assertThat(result.getMember()).isEqualTo(member);
+    }
+
+    @Test
+    public void 게시글목록조회_사이즈가0() {
+        // given
+        final PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createDate").descending());
+
+        // when
+        final Page<Article> result = articleRepository.findAll(pageRequest);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(0);
+    }
+
+    @Test
+    public void 게시글목록조회_사이즈가2() {
+        // given
+        final PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createDate").descending());
+        final Member member = getMember();
+        memberRepository.save(member);
+        memberRepository.flush();
+
+        final Article article1 = getArticle(member);
+        final Article article2 = getArticle(member);
+        articleRepository.save(article1);
+        articleRepository.save(article2);
+        articleRepository.flush();
+
+        // when
+        final Page<Article> result = articleRepository.findAll(pageRequest);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(2);
+    }
+
+    private Member getMember() {
+        return Member.builder()
                 .email("abcdef@gmail.com")
                 .nickname("닉네임")
                 .build();
+    }
 
-        final Article article = Article.builder()
+    private Article getArticle(Member member) {
+        return Article.builder()
                 .title("게시글 제목")
                 .content("게시글 내용")
                 .member(member)
@@ -35,18 +92,5 @@ public class ArticleRepositoryTest {
                 .formattedAddress("주소")
                 .image("36b8f84d-df4e-4d49-b662-bcde71a8764f")
                 .build();
-
-        // when
-        memberRepository.save(member);
-        final Article result = articleRepository.save(article);
-
-        // then
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("게시글 제목");
-        assertThat(result.getContent()).isEqualTo("내용");
-        assertThat(result.getImage()).isEqualTo("36b8f84d-df4e-4d49-b662-bcde71a8764f");
-        assertThat(result.getLocationName()).isEqualTo("장소명");
-        assertThat(result.getFormattedAddress()).isEqualTo("주소");
-        assertThat(result.getMember()).isEqualTo(member);
     }
 }

@@ -2,11 +2,14 @@ package com.milkcow.tripai.article.controller;
 
 import com.milkcow.tripai.article.dto.ArticleCreateRequest;
 import com.milkcow.tripai.article.dto.ArticleCreateResponse;
+import com.milkcow.tripai.article.dto.ArticlePageResponse;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.article.service.ArticleService;
 import com.milkcow.tripai.global.dto.DataResponse;
 import com.milkcow.tripai.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +25,21 @@ public class ArticleController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public DataResponse<ArticleCreateResponse> create(@RequestBody @Valid ArticleCreateRequest request) {
+        // TODO - @AuthenticationPrincipal 로 대체
         Member member = Member.builder().build();
 
         ArticleCreateResponse response = articleService.createArticle(request, member);
 
         return DataResponse.create(response, ArticleResult.ARTICLE_CREATED);
+    }
+
+    @GetMapping
+    public DataResponse<ArticlePageResponse> getPage(@RequestParam(defaultValue = "0") Integer pageNumber,
+                                                     @RequestParam(defaultValue = "10") Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDate").descending());
+
+        ArticlePageResponse response = articleService.getArticlePage(pageRequest);
+
+        return DataResponse.create(response);
     }
 }
