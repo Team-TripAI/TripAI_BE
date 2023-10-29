@@ -47,4 +47,13 @@ public class Article {
     @UpdateTimestamp
     @Column
     private LocalDateTime modifyDate;
+
+    public void updateArticle(String title, String content, String locationName, String formattedAddress,
+                              String image) {
+        this.title = title;
+        this.content = content;
+        this.locationName = locationName;
+        this.formattedAddress = formattedAddress;
+        this.image = image;
+    }
 }

@@ -2,10 +2,7 @@ package com.milkcow.tripai.article.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.article.domain.Article;
-import com.milkcow.tripai.article.dto.ArticleCreateRequest;
-import com.milkcow.tripai.article.dto.ArticleCreateResponse;
-import com.milkcow.tripai.article.dto.ArticleDetailResponse;
-import com.milkcow.tripai.article.dto.ArticlePageResponse;
+import com.milkcow.tripai.article.dto.*;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.article.service.ArticleService;
@@ -87,7 +84,7 @@ public class ArticleControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invalidArticleCreateParameter")
+    @MethodSource("invalidArticleParameter")
     public void 게시글작성실패_잘못된파라미터(
             final String title,
             final String content,
@@ -195,7 +192,63 @@ public class ArticleControllerTest {
         resultActions.andExpect(status().isOk());
     }
 
-    private static Stream<Arguments> invalidArticleCreateParameter() {
+    @ParameterizedTest
+    @MethodSource("invalidArticleParameter")
+    public void 게시글수정실패_잘못된파라미터(
+            final String title,
+            final String content,
+            final String locationName,
+            final String formattedAddress,
+            final String image,
+            final Double lat,
+            final Double lng,
+            final List<String> labelList,
+            final List<String> colorList
+    ) throws Exception {
+        // given
+        final String url = "/article/-1";
+        final ArticleModifyRequest request = ArticleModifyRequest.builder()
+                .title(title)
+                .content(content)
+                .locationName(locationName)
+                .formattedAddress(formattedAddress)
+                .image(image)
+                .lat(lat)
+                .lng(lng)
+                .labelList(labelList)
+                .colorList(colorList)
+                .build();
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.put(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void 게시글수정성공() throws Exception {
+        // given
+        final String url = "/article/-1";
+        doReturn(ArticleModifyResponse.from(-1L)).when(articleService).modifyArticle(anyLong(),
+                any(ArticleModifyRequest.class), any(Member.class));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.put(url)
+                        .content(objectMapper.writeValueAsString(getArticleModifyRequest()))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
+    private static Stream<Arguments> invalidArticleParameter() {
         List<String> labelList = new ArrayList<>();
         labelList.add("Water");
         labelList.add("Sky");
@@ -248,19 +301,9 @@ public class ArticleControllerTest {
     }
 
     private ArticleCreateRequest getArticleCreateRequest() {
-        List<String> labelList = new ArrayList<>();
-        labelList.add("Water");
-        labelList.add("Sky");
-        labelList.add("Cloud");
-        labelList.add("Boats and boating--Equipment and supplies");
-        labelList.add("Travel");
+        List<String> labelList = getLabelList();
 
-        List<String> colorList = new ArrayList<>();
-        colorList.add("819CBA");
-        colorList.add("759BCC");
-        colorList.add("69809B");
-        colorList.add("A4C2E2");
-        colorList.add("405771");
+        List<String> colorList = getColorList();
 
         return ArticleCreateRequest.builder()
                 .title("게시글 제목")
@@ -270,6 +313,44 @@ public class ArticleControllerTest {
                 .image("36b8f84d-df4e-4d49-b662-bcde71a8764f")
                 .lat(38.2252707)
                 .lng(128.5883593)
+                .labelList(labelList)
+                .colorList(colorList)
+                .build();
+    }
+
+    private List<String> getColorList() {
+        List<String> colorList = new ArrayList<>();
+        colorList.add("819CBA");
+        colorList.add("759BCC");
+        colorList.add("69809B");
+        colorList.add("A4C2E2");
+        colorList.add("405771");
+        return colorList;
+    }
+
+    private List<String> getLabelList() {
+        List<String> labelList = new ArrayList<>();
+        labelList.add("Water");
+        labelList.add("Sky");
+        labelList.add("Cloud");
+        labelList.add("Boats and boating--Equipment and supplies");
+        labelList.add("Travel");
+        return labelList;
+    }
+
+    private ArticleModifyRequest getArticleModifyRequest() {
+        List<String> labelList = getLabelList();
+
+        List<String> colorList = getColorList();
+
+        return ArticleModifyRequest.builder()
+                .title("새 게시글 제목")
+                .content("새 내용")
+                .formattedAddress("새 주소")
+                .locationName("새 장소명")
+                .image("01010101-df4e-4d49-b662-bcde71a8764f")
+                .lat(38.010101)
+                .lng(128.010101)
                 .labelList(labelList)
                 .colorList(colorList)
                 .build();

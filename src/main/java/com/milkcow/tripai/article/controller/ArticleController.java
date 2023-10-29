@@ -1,9 +1,6 @@
 package com.milkcow.tripai.article.controller;
 
-import com.milkcow.tripai.article.dto.ArticleCreateRequest;
-import com.milkcow.tripai.article.dto.ArticleCreateResponse;
-import com.milkcow.tripai.article.dto.ArticleDetailResponse;
-import com.milkcow.tripai.article.dto.ArticlePageResponse;
+import com.milkcow.tripai.article.dto.*;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.article.service.ArticleService;
 import com.milkcow.tripai.global.dto.DataResponse;
@@ -47,6 +44,17 @@ public class ArticleController {
     @GetMapping("/{articleId}")
     public DataResponse<ArticleDetailResponse> getDetail(@PathVariable Long articleId) {
         ArticleDetailResponse response = articleService.getArticle(articleId);
+
+        return DataResponse.create(response);
+    }
+
+    @PutMapping("/{articleId}")
+    public DataResponse<ArticleModifyResponse> modify(@PathVariable Long articleId,
+                                                      @RequestBody @Valid ArticleModifyRequest request) {
+        // TODO - @AuthenticationPrincipal 로 대체
+        Member member = Member.builder().build();
+
+        ArticleModifyResponse response = articleService.modifyArticle(articleId, request, member);
 
         return DataResponse.create(response);
     }
