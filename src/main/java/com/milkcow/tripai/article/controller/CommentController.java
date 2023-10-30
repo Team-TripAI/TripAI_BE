@@ -1,7 +1,6 @@
 package com.milkcow.tripai.article.controller;
 
-import com.milkcow.tripai.article.dto.CommentCreateRequest;
-import com.milkcow.tripai.article.dto.CommentCreateResponse;
+import com.milkcow.tripai.article.dto.*;
 import com.milkcow.tripai.article.result.CommentResult;
 import com.milkcow.tripai.article.service.CommentService;
 import com.milkcow.tripai.global.dto.DataResponse;
@@ -28,5 +27,16 @@ public class CommentController {
         CommentCreateResponse response = commentService.createComment(request, member);
 
         return DataResponse.create(response, CommentResult.COMMENT_CREATED);
+    }
+
+    @PutMapping("/{commentId}")
+    public DataResponse<CommentModifyResponse> modify(@PathVariable Long commentId,
+                                                      @RequestBody @Valid CommentModifyRequest request) {
+        // TODO - @AuthenticationPrincipal 로 대체
+        Member member = Member.builder().build();
+
+        CommentModifyResponse response = commentService.modifyComment(commentId, request, member);
+
+        return DataResponse.create(response);
     }
 }

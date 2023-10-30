@@ -4,6 +4,7 @@ import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.article.domain.Comment;
 import com.milkcow.tripai.article.dto.CommentCreateRequest;
 import com.milkcow.tripai.article.dto.CommentCreateResponse;
+import com.milkcow.tripai.article.dto.CommentModifyRequest;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.exception.CommentException;
 import com.milkcow.tripai.article.repository.ArticleRepository;
@@ -111,6 +112,20 @@ public class CommentServiceTest {
 
         // then
         assertThat(result.getCommentId()).isNotNull();
+    }
+
+    @Test
+    public void 댓글수정실패_댓글이존재하지않음() {
+        // given
+        CommentModifyRequest request = CommentModifyRequest.builder().content("새 댓글 내용").build();
+        doReturn(Optional.empty()).when(commentRepository).findById(anyLong());
+
+        // when
+        CommentException result = assertThrows(CommentException.class,
+                () -> target.modifyComment(-1L, request, Member.builder().build()));
+
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(CommentResult.COMMENT_NOT_FOUND);
     }
 
     private static Comment getComment(Long parentId, Member member) {

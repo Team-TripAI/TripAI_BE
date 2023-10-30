@@ -64,4 +64,9 @@ public class Comment {
         this.article = article;
         article.getCommentList().add(this);
     }
+
+    // 엔티티 수정 메서드
+    public void updateComment(String content) {
+        this.content = content;
+    }
 }
