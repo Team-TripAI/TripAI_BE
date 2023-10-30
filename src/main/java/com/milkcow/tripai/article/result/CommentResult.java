@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum CommentResult implements ResultProvider {
 
     COMMENT_CREATED(201, HttpStatus.CREATED, "댓글 등록 성공"),
+    COMMENT_DELETED(204, HttpStatus.NO_CONTENT, "댓글 삭제 성공"),
 
     NOT_COMMENT_OWNER(400, HttpStatus.BAD_REQUEST, "댓글 작성자가 아님"),
     COMMENT_NOT_FOUND(404, HttpStatus.NOT_FOUND, "댓글 찾을 수 없음"),

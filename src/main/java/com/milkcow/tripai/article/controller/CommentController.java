@@ -39,4 +39,15 @@ public class CommentController {
 
         return DataResponse.create(response);
     }
+
+    @DeleteMapping("/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public DataResponse<Void> remove(@PathVariable Long commentId) {
+        // TODO - @AuthenticationPrincipal 로 대체
+        Member member = Member.builder().build();
+
+        commentService.removeComment(commentId, member);
+
+        return DataResponse.create(null, CommentResult.COMMENT_DELETED);
+    }
 }

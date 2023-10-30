@@ -65,6 +65,18 @@ public class CommentService {
         return CommentModifyResponse.from(comment.getId());
     }
 
+    @Transactional
+    public void removeComment(Long commentId, Member member) {
+
+        final Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new CommentException(CommentResult.COMMENT_NOT_FOUND)
+        );
+
+        checkOwner(member, comment);
+
+        commentRepository.deleteById(commentId);
+    }
+
     private void checkOwner(Member member, Comment comment) {
         if (member == null) {
             throw new ArticleException(CommentResult.NULL_USER_ENTITY);
