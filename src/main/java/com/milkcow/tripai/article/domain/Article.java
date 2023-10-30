@@ -11,6 +11,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -30,6 +32,7 @@ public class Article {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(nullable = false)
@@ -40,6 +43,10 @@ public class Article {
 
     @Column
     private String image;
+
+    @OneToMany(mappedBy = "article")
+    @Builder.Default
+    private List<Comment> commentList = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false)
