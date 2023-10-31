@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-@Primary
 public class FlightPlanServiceAPIImpl implements FlightPlanService {
 
     @Value("${API-keys.X-API-URL}")
