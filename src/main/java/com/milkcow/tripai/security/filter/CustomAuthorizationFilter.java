@@ -21,13 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 
-@Component
-public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
+public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
+    private final AuthenticationManager authenticationManager;
     private final MemberRepository memberRepository;
 
     private final JwtService jwtService;
@@ -35,7 +34,8 @@ public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
     public CustomAuthorizationFilter(AuthenticationManager authenticationManager,
                                      MemberRepository memberRepository,
                                      JwtService jwtService) {
-        super(authenticationManager);
+//        super(authenticationManager);
+        this.authenticationManager = authenticationManager;
         this.memberRepository = memberRepository;
         this.jwtService = jwtService;
     }
