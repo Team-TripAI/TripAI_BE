@@ -47,7 +47,7 @@ public class OAuth2Service {
             Member member = Member.builder()
                     .email(email)
                     .nickname(googleData.getNickname())
-                    .password(UUID.randomUUID().toString().replaceAll("-", ""))
+//                    .password(UUID.randomUUID().toString().replaceAll("-", ""))
                     .build();
             memberRepository.save(member);
 
