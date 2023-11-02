@@ -48,17 +48,6 @@ public class ArticleController {
         return DataResponse.create(response);
     }
 
-    @PutMapping("/{articleId}")
-    public DataResponse<ArticleModifyResponse> modify(@PathVariable Long articleId,
-                                                      @RequestBody @Valid ArticleModifyRequest request) {
-        // TODO - @AuthenticationPrincipal 로 대체
-        Member member = Member.builder().build();
-
-        ArticleModifyResponse response = articleService.modify(articleId, request, member);
-
-        return DataResponse.create(response);
-    }
-
     @DeleteMapping("/{articleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public DataResponse<Void> remove(@PathVariable Long articleId) {

@@ -192,62 +192,6 @@ public class ArticleControllerTest {
         resultActions.andExpect(status().isOk());
     }
 
-    @ParameterizedTest
-    @MethodSource("invalidArticleParameter")
-    public void 게시글수정실패_잘못된파라미터(
-            final String title,
-            final String content,
-            final String locationName,
-            final String formattedAddress,
-            final String image,
-            final Double lat,
-            final Double lng,
-            final List<String> labelList,
-            final List<String> colorList
-    ) throws Exception {
-        // given
-        final String url = "/article/-1";
-        final ArticleModifyRequest request = ArticleModifyRequest.builder()
-                .title(title)
-                .content(content)
-                .locationName(locationName)
-                .formattedAddress(formattedAddress)
-                .image(image)
-                .lat(lat)
-                .lng(lng)
-                .labelList(labelList)
-                .colorList(colorList)
-                .build();
-
-        // when
-        final ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.put(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        // then
-        resultActions.andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void 게시글수정성공() throws Exception {
-        // given
-        final String url = "/article/-1";
-        doReturn(ArticleModifyResponse.from(-1L)).when(articleService).modify(anyLong(),
-                any(ArticleModifyRequest.class), any(Member.class));
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.put(url)
-                        .content(objectMapper.writeValueAsString(getArticleModifyRequest()))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        // then
-        resultActions.andExpect(status().isOk());
-    }
-
     @Test
     public void 게시글삭제성공() throws Exception {
         // given
@@ -352,21 +296,4 @@ public class ArticleControllerTest {
         return labelList;
     }
 
-    private ArticleModifyRequest getArticleModifyRequest() {
-        List<String> labelList = getLabelList();
-
-        List<String> colorList = getColorList();
-
-        return ArticleModifyRequest.builder()
-                .title("새 게시글 제목")
-                .content("새 내용")
-                .formattedAddress("새 주소")
-                .locationName("새 장소명")
-                .image("01010101-df4e-4d49-b662-bcde71a8764f")
-                .lat(38.010101)
-                .lng(128.010101)
-                .labelList(labelList)
-                .colorList(colorList)
-                .build();
-    }
 }

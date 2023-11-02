@@ -62,14 +62,4 @@ public class Article {
                 .member(member)
                 .build();
     }
-
-    // 엔티티 수정 메서드
-    public void updateArticle(String title, String content, String locationName, String formattedAddress,
-                              String image) {
-        this.title = title;
-        this.content = content;
-        this.locationName = locationName;
-        this.formattedAddress = formattedAddress;
-        this.image = image;
-    }
 }

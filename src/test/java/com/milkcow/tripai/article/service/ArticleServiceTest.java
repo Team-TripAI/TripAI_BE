@@ -6,9 +6,7 @@ import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.repository.ArticleRepository;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.image.domain.Image;
-import com.milkcow.tripai.image.exception.ImageException;
 import com.milkcow.tripai.image.repository.ImageRepository;
-import com.milkcow.tripai.image.result.ImageResult;
 import com.milkcow.tripai.member.domain.Member;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -120,82 +118,6 @@ public class ArticleServiceTest {
     }
 
     @Test
-    public void 게시글수정실패_게시글이존재하지않음() {
-        // given
-        ArticleModifyRequest request = getArticleModifyRequest();
-        Member member = getMember(-1L);
-        doReturn(Optional.empty()).when(articleRepository).findById(anyLong());
-
-        // when
-        final ArticleException result = assertThrows(ArticleException.class,
-                () -> target.modify(-1L, request, member));
-
-        // then
-        assertThat(result.getErrorResult()).isEqualTo(ArticleResult.ARTICLE_NOT_FOUND);
-    }
-
-    @Test
-    public void 게시글수정실패_이미지가존재하지않음() {
-        // given
-        ArticleModifyRequest request = getArticleModifyRequest();
-        Member member = getMember(-1L);
-        doReturn(Optional.of(getArticle(member))).when(articleRepository).findById(anyLong());
-        doReturn(Optional.empty()).when(imageRepository).findByImage(anyString());
-
-        // when
-        final ImageException result = assertThrows(ImageException.class,
-                () -> target.modify(-1L, request, member));
-
-        // then
-        assertThat(result.getErrorResult()).isEqualTo(ImageResult.IMAGE_NOT_FOUND);
-    }
-
-    @Test
-    public void 게시글수정실패_MEMBER가NULL임() {
-        // given
-        ArticleModifyRequest request = getArticleModifyRequest();
-        doReturn(Optional.of(Article.builder().build())).when(articleRepository).findById(anyLong());
-
-        // when
-        final ArticleException result = assertThrows(ArticleException.class,
-                () -> target.modify(-1L, request, null));
-
-        // then
-        assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NULL_USER_ENTITY);
-    }
-
-    @Test
-    public void 게시글수정실패_작성자가아님() {
-        // given
-        ArticleModifyRequest request = getArticleModifyRequest();
-        Member member1 = getMember(-1L);
-        Member member2 = getMember(-2L);
-        doReturn(Optional.of(getArticle(member1))).when(articleRepository).findById(anyLong());
-
-        // when
-        final ArticleException result = assertThrows(ArticleException.class,
-                () -> target.modify(-1L, request, member2));
-
-        // then
-        assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NOT_ARTICLE_OWNER);
-    }
-
-    @Test
-    public void 게시글수정성공() {
-        // given
-        Member member = getMember(-1L);
-        ArticleModifyRequest request = getArticleModifyRequest();
-        doReturn(Optional.of(getArticle(member))).when(articleRepository).findById(anyLong());
-        doReturn(Optional.of(Image.builder().build())).when(imageRepository).findByImage(anyString());
-
-        // when
-        final ArticleModifyResponse result = target.modify(-1L, request, member);
-
-        // then
-        assertThat(result.getArticleId()).isNotNull();
-    }
-
-    @Test
     public void 게시글삭제실패_MEMBER가NULL임() {
         // given
         doReturn(Optional.of(Article.builder().build())).when(articleRepository).findById(anyLong());
@@ -246,24 +168,6 @@ public class ArticleServiceTest {
         // then
     }
 
-
-
-    private ArticleModifyRequest getArticleModifyRequest() {
-        List<String> labelList = getLabelList();
-        List<String> colorList = getColorList();
-
-        return ArticleModifyRequest.builder()
-                .title("새 게시글 제목")
-                .content("새 내용")
-                .formattedAddress("새 주소")
-                .locationName("새 장소명")
-                .image("000000-df4e-4d49-b662-bcde71a8764f")
-                .lat(38.010101)
-                .lng(128.010101)
-                .labelList(labelList)
-                .colorList(colorList)
-                .build();
-    }
 
     private ArticleCreateRequest getArticleCreateRequest() {
         List<String> labelList = getLabelList();

@@ -7,9 +7,7 @@ import com.milkcow.tripai.article.repository.ArticleRepository;
 import com.milkcow.tripai.article.repository.CommentRepository;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.image.domain.Image;
-import com.milkcow.tripai.image.exception.ImageException;
 import com.milkcow.tripai.image.repository.ImageRepository;
-import com.milkcow.tripai.image.result.ImageResult;
 import com.milkcow.tripai.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -62,29 +60,6 @@ public class ArticleService {
 
         return ArticleDetailResponse.of(article, searchedComments);
     }
-
-    @Transactional
-    public ArticleModifyResponse modify(Long articleId, ArticleModifyRequest request, Member member) {
-
-        final Article article = articleRepository.findById(articleId).orElseThrow(
-                () -> new ArticleException(ArticleResult.ARTICLE_NOT_FOUND)
-        );
-
-        checkOwner(member, article);
-
-        final Image image = imageRepository.findByImage(request.getImage()).orElseThrow(
-                () -> new ImageException(ImageResult.IMAGE_NOT_FOUND)
-        );
-
-        article.updateArticle(request.getTitle(), request.getContent(), request.getLocationName(),
-                request.getFormattedAddress(), request.getImage());
-
-        image.updateImage(request.getLat(), request.getLng(), request.getLocationName(), request.getFormattedAddress(),
-                request.getLabelList(), request.getColorList());
-
-        return ArticleModifyResponse.from(article.getId());
-    }
-
 
     @Transactional
     public void remove(Long articleId, Member member) {
