@@ -26,7 +26,7 @@ public class ArticleController {
         // TODO - @AuthenticationPrincipal 로 대체
         Member member = Member.builder().build();
 
-        ArticleCreateResponse response = articleService.createArticle(request, member);
+        ArticleCreateResponse response = articleService.create(request, member);
 
         return DataResponse.create(response, ArticleResult.ARTICLE_CREATED);
     }
@@ -36,14 +36,14 @@ public class ArticleController {
                                                      @RequestParam(defaultValue = "10") Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDate").descending());
 
-        ArticlePageResponse response = articleService.getArticlePage(pageRequest);
+        ArticlePageResponse response = articleService.getPage(pageRequest);
 
         return DataResponse.create(response);
     }
 
     @GetMapping("/{articleId}")
     public DataResponse<ArticleDetailResponse> getDetail(@PathVariable Long articleId) {
-        ArticleDetailResponse response = articleService.getArticle(articleId);
+        ArticleDetailResponse response = articleService.getDetail(articleId);
 
         return DataResponse.create(response);
     }
@@ -54,7 +54,7 @@ public class ArticleController {
         // TODO - @AuthenticationPrincipal 로 대체
         Member member = Member.builder().build();
 
-        ArticleModifyResponse response = articleService.modifyArticle(articleId, request, member);
+        ArticleModifyResponse response = articleService.modify(articleId, request, member);
 
         return DataResponse.create(response);
     }
@@ -65,7 +65,7 @@ public class ArticleController {
         // TODO - @AuthenticationPrincipal 로 대체
         Member member = Member.builder().build();
 
-        articleService.removeArticle(articleId, member);
+        articleService.remove(articleId, member);
 
         return DataResponse.empty();
     }

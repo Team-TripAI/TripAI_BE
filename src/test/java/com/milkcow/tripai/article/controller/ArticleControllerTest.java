@@ -69,7 +69,7 @@ public class ArticleControllerTest {
 
         doThrow(new ArticleException(ArticleResult.NULL_USER_ENTITY))
                 .when(articleService)
-                .createArticle(getArticleCreateRequest(), null);
+                .create(getArticleCreateRequest(), null);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -128,7 +128,7 @@ public class ArticleControllerTest {
         final ArticleCreateResponse articleCreateResponse = ArticleCreateResponse.from(1L);
 
         doReturn(articleCreateResponse).when(articleService)
-                .createArticle(any(ArticleCreateRequest.class), any(Member.class));
+                .create(any(ArticleCreateRequest.class), any(Member.class));
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -161,7 +161,7 @@ public class ArticleControllerTest {
                 Article.builder().member(member).build()
         ), pageRequest, 3);
 
-        doReturn(ArticlePageResponse.from(pages)).when(articleService).getArticlePage(pageRequest);
+        doReturn(ArticlePageResponse.from(pages)).when(articleService).getPage(pageRequest);
 
         // when
         MultiValueMap<String, String> requestParam = new LinkedMultiValueMap<>();
@@ -181,7 +181,7 @@ public class ArticleControllerTest {
     public void 게시글상세조회성공() throws Exception {
         // given
         final String url = "/article/-1";
-        doReturn(ArticleDetailResponse.builder().build()).when(articleService).getArticle(-1L);
+        doReturn(ArticleDetailResponse.builder().build()).when(articleService).getDetail(-1L);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -234,7 +234,7 @@ public class ArticleControllerTest {
     public void 게시글수정성공() throws Exception {
         // given
         final String url = "/article/-1";
-        doReturn(ArticleModifyResponse.from(-1L)).when(articleService).modifyArticle(anyLong(),
+        doReturn(ArticleModifyResponse.from(-1L)).when(articleService).modify(anyLong(),
                 any(ArticleModifyRequest.class), any(Member.class));
 
         // when

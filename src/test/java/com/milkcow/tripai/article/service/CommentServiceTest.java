@@ -45,7 +45,7 @@ public class CommentServiceTest {
 
         // when
         CommentException result = assertThrows(CommentException.class,
-                () -> target.createComment(request, null));
+                () -> target.create(request, null));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(CommentResult.NULL_USER_ENTITY);
@@ -59,7 +59,7 @@ public class CommentServiceTest {
 
         // when
         ArticleException result = assertThrows(ArticleException.class,
-                () -> target.createComment(request, Member.builder().build()));
+                () -> target.create(request, Member.builder().build()));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.ARTICLE_NOT_FOUND);
@@ -74,7 +74,7 @@ public class CommentServiceTest {
 
         // when
         CommentException result = assertThrows(CommentException.class,
-                () -> target.createComment(request, Member.builder().build()));
+                () -> target.create(request, Member.builder().build()));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(CommentResult.COMMENT_NOT_FOUND);
@@ -89,7 +89,7 @@ public class CommentServiceTest {
         doReturn(Optional.of(Article.builder().build())).when(articleRepository).findById(anyLong());
 
         // when
-        CommentCreateResponse result = target.createComment(request, member);
+        CommentCreateResponse result = target.create(request, member);
 
         // then
         assertThat(result.getCommentId()).isNotNull();
@@ -108,7 +108,7 @@ public class CommentServiceTest {
         CommentCreateRequest request = getCreateRequest(-2L);
 
         // when
-        CommentCreateResponse result = target.createComment(request, member);
+        CommentCreateResponse result = target.create(request, member);
 
         // then
         assertThat(result.getCommentId()).isNotNull();
@@ -122,7 +122,7 @@ public class CommentServiceTest {
 
         // when
         CommentException result = assertThrows(CommentException.class,
-                () -> target.modifyComment(-1L, request, Member.builder().build()));
+                () -> target.modify(-1L, request, Member.builder().build()));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(CommentResult.COMMENT_NOT_FOUND);

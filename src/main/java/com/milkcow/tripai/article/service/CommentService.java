@@ -27,7 +27,7 @@ public class CommentService {
     private final ArticleRepository articleRepository;
 
     @Transactional
-    public CommentCreateResponse createComment(CommentCreateRequest request, Member member) {
+    public CommentCreateResponse create(CommentCreateRequest request, Member member) {
 
         if (member == null) {
             throw new CommentException(CommentResult.NULL_USER_ENTITY);
@@ -44,7 +44,7 @@ public class CommentService {
             );
         }
 
-        Comment comment = Comment.createComment(request, article, member);
+        Comment comment = Comment.of(request, article, member);
 
         Comment savedComment = commentRepository.save(comment);
 
@@ -52,7 +52,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentModifyResponse modifyComment(Long commentId, CommentModifyRequest request, Member member) {
+    public CommentModifyResponse modify(Long commentId, CommentModifyRequest request, Member member) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new CommentException(CommentResult.COMMENT_NOT_FOUND)
@@ -66,7 +66,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void removeComment(Long commentId, Member member) {
+    public void remove(Long commentId, Member member) {
 
         final Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new CommentException(CommentResult.COMMENT_NOT_FOUND)

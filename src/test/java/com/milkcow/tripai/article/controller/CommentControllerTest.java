@@ -80,7 +80,7 @@ public class CommentControllerTest {
                 .build();
 
         doReturn(CommentCreateResponse.from(-1L))
-                .when(commentService).createComment(any(CommentCreateRequest.class), any(Member.class));
+                .when(commentService).create(any(CommentCreateRequest.class), any(Member.class));
 
         // when
         ResultActions resultActions = mockMvc.perform(

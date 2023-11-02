@@ -48,7 +48,7 @@ public class ArticleServiceTest {
 
         // when
         final ArticleException result = assertThrows(ArticleException.class,
-                () -> target.createArticle(request, null));
+                () -> target.create(request, null));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NULL_USER_ENTITY);
@@ -64,7 +64,7 @@ public class ArticleServiceTest {
         doReturn(getArticle(member)).when(articleRepository).save(any(Article.class));
 
         // when
-        final ArticleCreateResponse result = target.createArticle(articleCreateRequest, member);
+        final ArticleCreateResponse result = target.create(articleCreateRequest, member);
 
         // then
         assertThat(result.getArticleId()).isNotNull();
@@ -87,7 +87,7 @@ public class ArticleServiceTest {
         doReturn(pages).when(articleRepository).findAll(pageRequest);
 
         // when
-        final ArticlePageResponse result = target.getArticlePage(pageRequest);
+        final ArticlePageResponse result = target.getPage(pageRequest);
 
         // then
         assertThat(result.getArticleList().size()).isEqualTo(3);
@@ -100,7 +100,7 @@ public class ArticleServiceTest {
         doReturn(Optional.empty()).when(articleRepository).findById(anyLong());
 
         // when
-        final ArticleException result = assertThrows(ArticleException.class, () -> target.getArticle(-1L));
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.getDetail(-1L));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.ARTICLE_NOT_FOUND);
@@ -113,7 +113,7 @@ public class ArticleServiceTest {
         doReturn(Optional.of(getArticle(member))).when(articleRepository).findById(anyLong());
 
         // when
-        final ArticleDetailResponse result = target.getArticle(-1L);
+        final ArticleDetailResponse result = target.getDetail(-1L);
 
         // then
         assertThat(result.getArticleId()).isNotNull();
@@ -128,7 +128,7 @@ public class ArticleServiceTest {
 
         // when
         final ArticleException result = assertThrows(ArticleException.class,
-                () -> target.modifyArticle(-1L, request, member));
+                () -> target.modify(-1L, request, member));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.ARTICLE_NOT_FOUND);
@@ -144,7 +144,7 @@ public class ArticleServiceTest {
 
         // when
         final ImageException result = assertThrows(ImageException.class,
-                () -> target.modifyArticle(-1L, request, member));
+                () -> target.modify(-1L, request, member));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ImageResult.IMAGE_NOT_FOUND);
@@ -158,7 +158,7 @@ public class ArticleServiceTest {
 
         // when
         final ArticleException result = assertThrows(ArticleException.class,
-                () -> target.modifyArticle(-1L, request, null));
+                () -> target.modify(-1L, request, null));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NULL_USER_ENTITY);
@@ -174,7 +174,7 @@ public class ArticleServiceTest {
 
         // when
         final ArticleException result = assertThrows(ArticleException.class,
-                () -> target.modifyArticle(-1L, request, member2));
+                () -> target.modify(-1L, request, member2));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NOT_ARTICLE_OWNER);
@@ -189,7 +189,7 @@ public class ArticleServiceTest {
         doReturn(Optional.of(Image.builder().build())).when(imageRepository).findByImage(anyString());
 
         // when
-        final ArticleModifyResponse result = target.modifyArticle(-1L, request, member);
+        final ArticleModifyResponse result = target.modify(-1L, request, member);
 
         // then
         assertThat(result.getArticleId()).isNotNull();
@@ -201,7 +201,7 @@ public class ArticleServiceTest {
         doReturn(Optional.of(Article.builder().build())).when(articleRepository).findById(anyLong());
 
         // when
-        final ArticleException result = assertThrows(ArticleException.class, () -> target.removeArticle(-1L, null));
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.remove(-1L, null));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NULL_USER_ENTITY);
@@ -214,7 +214,7 @@ public class ArticleServiceTest {
         Member member = getMember(-1L);
 
         // when
-        final ArticleException result = assertThrows(ArticleException.class, () -> target.removeArticle(-1L, member));
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.remove(-1L, member));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.ARTICLE_NOT_FOUND);
@@ -228,7 +228,7 @@ public class ArticleServiceTest {
         doReturn(Optional.of(getArticle(member1))).when(articleRepository).findById(anyLong());
 
         // when
-        final ArticleException result = assertThrows(ArticleException.class, () -> target.removeArticle(-1L, member2));
+        final ArticleException result = assertThrows(ArticleException.class, () -> target.remove(-1L, member2));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(ArticleResult.NOT_ARTICLE_OWNER);
@@ -241,7 +241,7 @@ public class ArticleServiceTest {
         doReturn(Optional.of(getArticle(member))).when(articleRepository).findById(anyLong());
 
         // when
-        target.removeArticle(-1L, member);
+        target.remove(-1L, member);
 
         // then
     }

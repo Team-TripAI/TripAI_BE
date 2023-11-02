@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -30,7 +32,13 @@ public class ArticleDetailResponse {
 
     private final LocalDateTime modifyDate;
 
-    public static ArticleDetailResponse from(Article article) {
+    private final List<CommentDetailResponse> commentList;
+
+    public static ArticleDetailResponse of(Article article, List<CommentSearch> searchedComments) {
+        List<CommentDetailResponse> commentList = searchedComments.stream()
+                .map(CommentDetailResponse::from)
+                .collect(Collectors.toList());
+
         return ArticleDetailResponse.builder()
                 .articleId(article.getId())
                 .title(article.getTitle())
@@ -41,6 +49,7 @@ public class ArticleDetailResponse {
                 .nickname(article.getMember().getNickname())
                 .createDate(article.getCreateDate())
                 .modifyDate(article.getModifyDate())
+                .commentList(commentList)
                 .build();
     }
 }

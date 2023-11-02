@@ -11,8 +11,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table
@@ -44,10 +42,6 @@ public class Article {
     @Column
     private String image;
 
-    @OneToMany(mappedBy = "article")
-    @Builder.Default
-    private List<Comment> commentList = new ArrayList<>();
-
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createDate;
@@ -57,7 +51,7 @@ public class Article {
     private LocalDateTime modifyDate;
 
     // 엔티티 생성 메서드
-    public static Article createArticle(ArticleCreateRequest request, Member member) {
+    public static Article of(ArticleCreateRequest request, Member member) {
 
         return Article.builder()
                 .title(request.getTitle())

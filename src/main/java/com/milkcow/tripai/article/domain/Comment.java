@@ -47,22 +47,14 @@ public class Comment {
     private LocalDateTime modifyDate;
 
     // 엔티티 생성 메서드
-    public static Comment createComment(CommentCreateRequest request, Article article, Member member) {
-        Comment comment = Comment.builder()
+    public static Comment of(CommentCreateRequest request, Article article, Member member) {
+
+        return Comment.builder()
+                .article(article)
                 .content(request.getContent())
                 .member(member)
                 .parentId(request.getCommentId())
                 .build();
-
-        comment.setArticle(article);
-
-        return comment;
-    }
-
-    // 연관관계 메서드
-    private void setArticle(Article article) {
-        this.article = article;
-        article.getCommentList().add(this);
     }
 
     // 엔티티 수정 메서드

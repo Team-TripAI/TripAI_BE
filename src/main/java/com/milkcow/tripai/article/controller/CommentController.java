@@ -24,7 +24,7 @@ public class CommentController {
         // TODO - @AuthenticationPrincipal 로 대체
         Member member = Member.builder().build();
 
-        CommentCreateResponse response = commentService.createComment(request, member);
+        CommentCreateResponse response = commentService.create(request, member);
 
         return DataResponse.create(response, CommentResult.COMMENT_CREATED);
     }
@@ -35,7 +35,7 @@ public class CommentController {
         // TODO - @AuthenticationPrincipal 로 대체
         Member member = Member.builder().build();
 
-        CommentModifyResponse response = commentService.modifyComment(commentId, request, member);
+        CommentModifyResponse response = commentService.modify(commentId, request, member);
 
         return DataResponse.create(response);
     }
@@ -46,7 +46,7 @@ public class CommentController {
         // TODO - @AuthenticationPrincipal 로 대체
         Member member = Member.builder().build();
 
-        commentService.removeComment(commentId, member);
+        commentService.remove(commentId, member);
 
         return DataResponse.create(null, CommentResult.COMMENT_DELETED);
     }
