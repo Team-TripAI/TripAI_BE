@@ -18,12 +18,12 @@ class MemberRepositoryTest {
         //given
         Member m1 = Member.builder()
                 .email("juns1s@naver.com")
-                .password("1234")
+//                .password("1234")
                 .nickname("junseo")
                 .build();
         Member m2 = Member.builder()
                 .email("abcd@naver.com")
-                .password("4321")
+//                .password("4321")
                 .nickname("abcd")
                 .build();
         //when
@@ -42,12 +42,12 @@ class MemberRepositoryTest {
         //given
         Member m1 = Member.builder()
                 .email("juns1s@naver.com")
-                .password("1234")
+//                .password("1234")
                 .nickname("junseo")
                 .build();
         Member m2 = Member.builder()
                 .email("abcd@naver.com")
-                .password("4321")
+//                .password("4321")
                 .nickname("abcd")
                 .build();
         //when
