@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/articles")
 @RequiredArgsConstructor
 public class ArticleController {
 
@@ -26,7 +25,7 @@ public class ArticleController {
 
     private final CustomUserDetailsService userDetailsService;
 
-    @PostMapping
+    @PostMapping("/articles")
     @ResponseStatus(HttpStatus.CREATED)
     public DataResponse<ArticleCreateResponse> create(@AuthenticationPrincipal UserDetails userDetails,
                                                       @RequestBody @Valid ArticleCreateRequest request) {
@@ -39,7 +38,7 @@ public class ArticleController {
         return DataResponse.create(response, ArticleResult.ARTICLE_CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/articles")
     public DataResponse<ArticlePageResponse> getPage(@RequestParam(defaultValue = "0") Integer pageNumber,
                                                      @RequestParam(defaultValue = "10") Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDate").descending());
@@ -49,14 +48,29 @@ public class ArticleController {
         return DataResponse.create(response);
     }
 
-    @GetMapping("/{articleId}")
+    @GetMapping("/users/articles")
+    public DataResponse<ArticlePageResponse> getPage(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestParam(defaultValue = "0") Integer pageNumber,
+                                                     @RequestParam(defaultValue = "10") Integer pageSize) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
+                userDetails.getUsername());
+        Member member = customUserDetails.getMember();
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDate").descending());
+
+        ArticlePageResponse response = articleService.getPage(pageRequest, member);
+
+        return DataResponse.create(response);
+    }
+
+    @GetMapping("/articles/{articleId}")
     public DataResponse<ArticleDetailResponse> getDetail(@PathVariable Long articleId) {
         ArticleDetailResponse response = articleService.getDetail(articleId);
 
         return DataResponse.create(response);
     }
 
-    @DeleteMapping("/{articleId}")
+    @DeleteMapping("/articles/{articleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public DataResponse<Void> remove(@AuthenticationPrincipal UserDetails userDetails,
                                      @PathVariable Long articleId) {

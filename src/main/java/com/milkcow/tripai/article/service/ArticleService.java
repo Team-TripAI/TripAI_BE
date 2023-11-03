@@ -51,6 +51,13 @@ public class ArticleService {
         return ArticlePageResponse.from(articlePage);
     }
 
+    public ArticlePageResponse getPage(PageRequest pageRequest, Member member) {
+
+        final Page<Article> articlePage = articleRepository.findAllByMember(pageRequest, member);
+
+        return ArticlePageResponse.from(articlePage);
+    }
+
     public ArticleDetailResponse getDetail(Long id) {
 
         final Article article = articleRepository.findById(id).orElseThrow(
