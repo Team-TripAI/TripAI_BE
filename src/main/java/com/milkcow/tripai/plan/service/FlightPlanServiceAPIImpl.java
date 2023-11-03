@@ -28,11 +28,11 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FlightPlanServiceAPIImpl implements FlightPlanService {
 
-    @Value("${API-keys.TripAdvisor-X-API-URL}")
+    @Value("${API-keys.TripAdvisor.SearchFlights-URL}")
     private String BASE_URL;
-    @Value("${API-keys.TripAdvisor-X-API-Key}")
+    @Value("${API-keys.TripAdvisor.API-Key}")
     private String APIKEY;
-    @Value("${API-keys.TripAdvisor-X-API-Host}")
+    @Value("${API-keys.TripAdvisor.API-Host}")
     private String APIHOST;
 
     @Override
@@ -75,7 +75,7 @@ public class FlightPlanServiceAPIImpl implements FlightPlanService {
         } catch (JsonProcessingException | MalformedURLException | UnsupportedEncodingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         }catch (HttpClientErrorException e){
-            throw new PlanException(PlanResult.API_KEY_LIMIT_EXCESS);
+            throw new PlanException(PlanResult.FLIGHT_API_KEY_LIMIT_EXCESS);
         }
     }
 
