@@ -13,6 +13,7 @@ public enum CommentResult implements ResultProvider {
     COMMENT_DELETED(204, HttpStatus.NO_CONTENT, "댓글 삭제 성공"),
 
     NOT_COMMENT_OWNER(400, HttpStatus.BAD_REQUEST, "댓글 작성자가 아님"),
+    NOT_PARENT_COMMENT(400, HttpStatus.BAD_REQUEST, "부모 댓글이 아님"),
     COMMENT_NOT_FOUND(404, HttpStatus.NOT_FOUND, "댓글 찾을 수 없음"),
 
     NULL_USER_ENTITY(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내 오류"),

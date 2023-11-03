@@ -37,11 +37,16 @@ public class CommentService {
                 () -> new ArticleException(ArticleResult.ARTICLE_NOT_FOUND)
         );
 
-        // 대댓글 추가 요청인 경우, 부모 댓글이 존재 하는지 확인
+        // 대댓글 추가 요청인 경우
         if (request.getCommentId() != null) {
-            commentRepository.findById(request.getCommentId()).orElseThrow(
+            // 부모 댓글이 존재 하는지 확인
+            Comment parentComment = commentRepository.findById(request.getCommentId()).orElseThrow(
                     () -> new CommentException(CommentResult.COMMENT_NOT_FOUND)
             );
+            // 부모 댓글이 대댓글이 아닌지 확인
+            if (parentComment.getParentId() != null) {
+                throw new CommentException(CommentResult.NOT_PARENT_COMMENT);
+            }
         }
 
         Comment comment = Comment.of(request, article, member);
