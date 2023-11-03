@@ -1,6 +1,5 @@
 package com.milkcow.tripai.article.dto;
 
-import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.image.domain.Image;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,9 +41,11 @@ public class ArticleCreateRequest {
     private final Double lng;
 
     @NotNull
+    @Size(min = 5, max = 5)
     private final List<String> labelList;
 
     @NotNull
+    @Size(min = 5, max = 5)
     private final List<String> colorList;
 
     public final Image toImage() {
