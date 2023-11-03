@@ -70,6 +70,8 @@ public class ArticleService {
 
         checkOwner(member, article);
 
+        commentRepository.deleteAllByArticle(article);
+
         articleRepository.deleteById(articleId);
     }
 
