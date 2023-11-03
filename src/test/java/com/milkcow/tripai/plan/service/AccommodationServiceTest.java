@@ -1,15 +1,16 @@
 package com.milkcow.tripai.plan.service;
 
 import com.milkcow.tripai.plan.dto.AccommodationDataDto;
+import com.milkcow.tripai.plan.service.accommodation.AccommodationService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AccommodationPlanServiceTest {
+class AccommodationServiceTest {
     @Autowired
-    private AccommodationPlanService accommodationPlanService;
+    private AccommodationService accommodationService;
 
     @Test
     public void 숙박_조회() throws Exception{
@@ -19,7 +20,7 @@ class AccommodationPlanServiceTest {
         String endDate = "2023-12-31";
         int maxPrice = 200000;
         //when
-        AccommodationDataDto accommodationData = accommodationPlanService.getAccommodationData(destination, startDate,
+        AccommodationDataDto accommodationData = accommodationService.getAccommodationData(destination, startDate,
                 endDate, maxPrice);
         //then
         System.out.println("accommodationCount = " + accommodationData.getAccommodationCount());

@@ -1,4 +1,4 @@
-package com.milkcow.tripai.plan.service;
+package com.milkcow.tripai.plan.service.flight;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,7 +26,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class FlightPlanServiceAPIImpl implements FlightPlanService {
+public class FlightServiceImpl implements FlightService {
 
     @Value("${API-keys.TripAdvisor.SearchFlights-URL}")
     private String BASE_URL;

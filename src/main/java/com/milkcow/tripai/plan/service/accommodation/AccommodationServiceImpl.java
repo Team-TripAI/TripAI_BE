@@ -1,4 +1,4 @@
-package com.milkcow.tripai.plan.service;
+package com.milkcow.tripai.plan.service.accommodation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class AccommodationPlanServiceImpl implements AccommodationPlanService {
+public class AccommodationServiceImpl implements AccommodationService {
 
     @Value("${API-keys.Booking.SearchHotelDestination-URL}")
     private String SEARCH_DESTINATION_URL;
