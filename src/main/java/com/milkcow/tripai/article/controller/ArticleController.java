@@ -5,10 +5,14 @@ import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.article.service.ArticleService;
 import com.milkcow.tripai.global.dto.DataResponse;
 import com.milkcow.tripai.member.domain.Member;
+import com.milkcow.tripai.security.CustomUserDetails;
+import com.milkcow.tripai.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,11 +24,15 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
+    private final CustomUserDetailsService userDetailsService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DataResponse<ArticleCreateResponse> create(@RequestBody @Valid ArticleCreateRequest request) {
-        // TODO - @AuthenticationPrincipal 로 대체
-        Member member = Member.builder().build();
+    public DataResponse<ArticleCreateResponse> create(@AuthenticationPrincipal UserDetails userDetails,
+                                                      @RequestBody @Valid ArticleCreateRequest request) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
+                userDetails.getUsername());
+        Member member = customUserDetails.getMember();
 
         ArticleCreateResponse response = articleService.create(request, member);
 
@@ -50,9 +58,11 @@ public class ArticleController {
 
     @DeleteMapping("/{articleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public DataResponse<Void> remove(@PathVariable Long articleId) {
-        // TODO - @AuthenticationPrincipal 로 대체
-        Member member = Member.builder().build();
+    public DataResponse<Void> remove(@AuthenticationPrincipal UserDetails userDetails,
+                                     @PathVariable Long articleId) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
+                userDetails.getUsername());
+        Member member = customUserDetails.getMember();
 
         articleService.remove(articleId, member);
 
