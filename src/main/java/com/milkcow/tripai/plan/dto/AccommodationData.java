@@ -1,6 +1,5 @@
 package com.milkcow.tripai.plan.dto;
 
-import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,8 +9,8 @@ public class AccommodationData {
     private String name;
     private Double lat;
     private Double lng;
-    private LocalDate startTime;
-    private LocalDate endTime;
-    private Integer price;
+    private String startDate;
+    private String endDate;
+    private Double price;
     private String image;
 }
