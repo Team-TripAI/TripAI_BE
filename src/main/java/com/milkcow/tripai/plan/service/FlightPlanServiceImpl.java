@@ -9,8 +9,6 @@ import com.milkcow.tripai.plan.dto.FlightData;
 import com.milkcow.tripai.plan.dto.FlightDataDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanResult;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,13 +24,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class FlightPlanServiceAPIImpl implements FlightPlanService {
+public class FlightPlanServiceImpl implements FlightPlanService {
 
-    @Value("${API-keys.X-API-URL}")
+    @Value("${API-keys.Booking-X-API-URL}")
     private String BASE_URL;
-    @Value("${API-keys.X-API-Key}")
+    @Value("${API-keys.Booking-X-API-Key}")
     private String APIKEY;
-    @Value("${API-keys.X-API-Host}")
+    @Value("${API-keys.Booking-X-API-Host}")
     private String APIHOST;
 
     @Override
@@ -52,14 +50,17 @@ public class FlightPlanServiceAPIImpl implements FlightPlanService {
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
             if (response.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanResult.FLIGHT_API_REQUEST_FAILED);
+                if (response.getStatusCode().is4xxClientError()) {
+                    throw new PlanException(PlanResult.API_KEY_LIMIT_EXCESS);
+                } else {
+                    throw new PlanException(PlanResult.FLIGHT_API_REQUEST_FAILED);
+                }
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode responseBody = objectMapper.readTree(response.getBody());
 
-            JsonNode flightListJson = responseBody.path("data").path("flights");
-
+            JsonNode flightListJson = responseBody.path("data").path("flightOffers");
             for (JsonNode flight : flightListJson) {
                 FlightData flightData = parseFlightData(departureAirport, arrivalAirport, departureDate, flight);
 
@@ -72,24 +73,25 @@ public class FlightPlanServiceAPIImpl implements FlightPlanService {
                     .flightCount(flightDataList.size())
                     .flightDataList(flightDataList)
                     .build();
-        } catch (JsonProcessingException | MalformedURLException | UnsupportedEncodingException e) {
+        } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private static FlightData parseFlightData(String departureAirport, String arrivalAirport, String departureDate,
-                                              JsonNode flight) {
-        int fare = flight.path("purchaseLinks").path(0).get("totalPrice").asInt();
-        JsonNode schedule = flight.path("segments").path(0).path("legs").path(0);
-        String airline = schedule.get("marketingCarrierCode").asText();
-        String flightNumber = schedule.get("flightNumber").asText();
+    private FlightData parseFlightData(String departureAirport, String arrivalAirport, String departureDate,
+                                       JsonNode flight) {
+        JsonNode flightInfo = flight.path("segments").path(0).path("legs").path(0).get("flightInfo");
+        int flightNumber = flightInfo.get("flightNumber").asInt();
+        String airline = flightInfo.path("carrierInfo").get("operatingCarrier").asText();
         String flightId = airline + flightNumber;
 
-        String[] departureDateTime = schedule.get("departureDateTime").asText().split("T");
+        String[] departureDateTime = flight.get("segments").path(0).get("departureTime").asText().split("T");
+        String[] arrivalDateTime = flight.get("segments").path(0).get("arrivalTime").asText().split("T");
         String departureTime = departureDateTime[1];
-        String[] arrivalDateTime = schedule.get("arrivalDateTime").asText().split("T");
         String arrivalDate = arrivalDateTime[0];
         String arrivalTime = arrivalDateTime[1];
+
+        int fare = flight.path("priceBreakdown").path("total").get("units").asInt();
 
         return FlightData.builder()
                 .id(flightId)
@@ -104,6 +106,20 @@ public class FlightPlanServiceAPIImpl implements FlightPlanService {
                 .build();
     }
 
+    private String setURL(String departureAirport, String arrivalAirport, String departureDate) {
+        String url = this.BASE_URL
+                + "?fromId=" + URLEncoder.encode(departureAirport + ".AIRPORT", StandardCharsets.UTF_8)
+                + "&toId=" + URLEncoder.encode(arrivalAirport + ".AIRPORT", StandardCharsets.UTF_8)
+                + "&departDate=" + URLEncoder.encode(departureDate, StandardCharsets.UTF_8)
+                + "&pageNo=" + "1"
+                + "&adults=" + "1"
+                + "&sort=" + "BEST"
+                + "&cabinClass=" + "ECONOMY"
+                + "&currencyCode=" + "KRW";
+
+        return url;
+    }
+
     private HttpHeaders setHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-RapidAPI-Key", this.APIKEY);
@@ -111,23 +127,4 @@ public class FlightPlanServiceAPIImpl implements FlightPlanService {
 
         return headers;
     }
-
-    private String setURL(String departureAirport, String arrivalAirport, String departureDate)
-            throws UnsupportedEncodingException, MalformedURLException {
-        String url = this.BASE_URL
-                + "?sourceAirportCode=" + URLEncoder.encode(departureAirport, StandardCharsets.UTF_8)
-                + "&destinationAirportCode=" + URLEncoder.encode(arrivalAirport, StandardCharsets.UTF_8)
-                + "&date=" + URLEncoder.encode(departureDate, StandardCharsets.UTF_8)
-                + "&itineraryType=" + "ONE_WAY"
-                + "&sortOrder=" + "PRICE"
-                + "&numAdults=" + "1"
-                + "&numSeniors=" + "0"
-                + "&classOfService=" + "ECONOMY"
-                + "&pageNumber=" + "1"
-                + "&nonstop=" + "yes"
-                + "&currencyCode=" + "KRW";
-
-        return url;
-    }
-
 }
