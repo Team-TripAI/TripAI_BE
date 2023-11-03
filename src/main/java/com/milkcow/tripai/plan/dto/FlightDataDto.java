@@ -1,13 +1,12 @@
 package com.milkcow.tripai.plan.dto;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.ArrayList;
 
 @Data
 @Builder
 public class FlightDataDto {
     private int flightCount;
-    private ArrayList<FlightData> flightDataList;
+    private List<FlightData> flightDataList;
 }
