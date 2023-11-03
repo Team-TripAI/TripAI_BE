@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FlightPlanServiceAPIImplTest {
+class FlightPlanServiceTest {
 
     @Autowired
     private FlightPlanService flightPlanServiceAPI;
