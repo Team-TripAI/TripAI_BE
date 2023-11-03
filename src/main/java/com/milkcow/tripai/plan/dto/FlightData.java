@@ -14,7 +14,8 @@ public class FlightData {
     private String airline;
     private String departureTime;
     private String arrivalTime;
-    private int fare;
+    private Integer fare;
+    private String url;
 
     @Override
     public String toString() {
@@ -28,6 +29,7 @@ public class FlightData {
                 ", departureTime='" + departureTime + '\'' +
                 ", arrivalTime='" + arrivalTime + '\'' +
                 ", fare=" + fare +
+                ", url='" + url + '\'' +
                 '}';
     }
 }
