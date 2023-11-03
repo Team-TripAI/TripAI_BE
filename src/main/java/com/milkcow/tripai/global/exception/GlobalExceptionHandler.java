@@ -1,5 +1,7 @@
 package com.milkcow.tripai.global.exception;
 
+import com.milkcow.tripai.article.exception.ArticleException;
+import com.milkcow.tripai.article.exception.CommentException;
 import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.global.dto.ErrorResponse;
 import com.milkcow.tripai.global.result.ResultProvider;
@@ -54,7 +56,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             OAuth2Exception.class,
             PlanException.class,
             MemberException.class,
-            JwtException.class
+            JwtException.class,
+            ArticleException.class,
+            CommentException.class,
     })
     public ResponseEntity<ErrorResponse> handleGeneralException(final ErrorResultAccessor ex) {
 
