@@ -78,7 +78,7 @@ public class ArticleService {
             throw new ArticleException(ArticleResult.NULL_USER_ENTITY);
         }
 
-        if (!member.equals(article.getMember())) {
+        if (!member.getId().equals(article.getMember().getId())) {
             throw new ArticleException(ArticleResult.NOT_ARTICLE_OWNER);
         }
     }

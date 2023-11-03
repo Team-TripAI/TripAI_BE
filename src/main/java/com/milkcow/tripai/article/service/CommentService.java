@@ -82,7 +82,7 @@ public class CommentService {
             throw new ArticleException(CommentResult.NULL_USER_ENTITY);
         }
 
-        if (!member.equals(comment.getMember())) {
+        if (!member.getId().equals(comment.getMember().getId())) {
             throw new ArticleException(CommentResult.NOT_COMMENT_OWNER);
         }
     }
