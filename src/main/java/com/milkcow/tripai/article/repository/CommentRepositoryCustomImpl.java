@@ -3,6 +3,7 @@ package com.milkcow.tripai.article.repository;
 import com.milkcow.tripai.article.domain.QComment;
 import com.milkcow.tripai.article.dto.CommentSearch;
 import com.milkcow.tripai.article.dto.QCommentSearch;
+import com.milkcow.tripai.member.domain.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +17,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     @Override
     public List<CommentSearch> search(Long articleId) {
         QComment qComment = QComment.comment;
+        QMember qMember = QMember.member;
 
         List<CommentSearch> searchedComments = queryFactory
                 .select(new QCommentSearch(
@@ -27,6 +29,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
                         qComment.modifyDate
                 ))
                 .from(qComment)
+                .leftJoin(qComment.member, qMember)
                 .where(qComment.article.id.eq(articleId))
                 .fetch();
 

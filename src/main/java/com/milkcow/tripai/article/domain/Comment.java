@@ -28,7 +28,7 @@ public class Comment {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    @Column(nullable = false)
+    @Column
     private String content;
 
     @Column
@@ -60,5 +60,10 @@ public class Comment {
     // 엔티티 수정 메서드
     public void updateComment(String content) {
         this.content = content;
+    }
+
+    public void deleteComment() {
+        this.content = null;
+        this.member = null;
     }
 }

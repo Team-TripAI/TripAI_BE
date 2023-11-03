@@ -79,7 +79,7 @@ public class CommentService {
 
         checkOwner(member, comment);
 
-        commentRepository.deleteById(commentId);
+        comment.deleteComment();
     }
 
     private void checkOwner(Member member, Comment comment) {
@@ -87,7 +87,14 @@ public class CommentService {
             throw new ArticleException(CommentResult.NULL_USER_ENTITY);
         }
 
-        if (!member.getId().equals(comment.getMember().getId())) {
+        Member owner = comment.getMember();
+
+        // 이전에 삭제된 댓글인 경우
+        if (owner == null) {
+            throw new CommentException(CommentResult.ALREADY_REMOVED);
+        }
+
+        if (!member.getId().equals(owner.getId())) {
             throw new ArticleException(CommentResult.NOT_COMMENT_OWNER);
         }
     }
