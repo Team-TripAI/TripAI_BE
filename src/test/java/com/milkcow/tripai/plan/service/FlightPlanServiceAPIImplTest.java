@@ -1,24 +1,28 @@
 package com.milkcow.tripai.plan.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.milkcow.tripai.plan.dto.FlightDataDto;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.jupiter.api.Test;
 
 @SpringBootTest
-class FlightPlanServiceTest {
+class FlightPlanServiceAPIImplTest {
+
     @Autowired
-    private FlightPlanService flightPlanService;
-    
+    private FlightPlanServiceAPIImpl flightPlanServiceAPI;
+
     @Test
     public void 항공권_조회() throws Exception{
         //given
         //when
-        FlightDataDto flightData = flightPlanService.getFlightData("LAX", "ICN", "20231225", 2000000);
+        FlightDataDto flightData = flightPlanServiceAPI.getFlightData("GMP", "CJU", "2023-12-25", 987654321);
         //then
         System.out.println("flightData.getFlightDataList() = " + flightData.getFlightDataList());
+        System.out.println("flightData.getFlightCount() = " + flightData.getFlightCount());
         Assertions.assertThat(flightData.getFlightCount()).isPositive();
     }
-    
+
 }

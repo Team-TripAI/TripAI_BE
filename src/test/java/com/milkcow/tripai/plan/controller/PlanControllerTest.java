@@ -35,18 +35,16 @@ class PlanControllerTest {
         final String api = "/plan/budget/flight";
         final String departureAirport = "LAX";
         final String arrivalAirport = "ICN";
-        final String departure = "20231225";
+        final String departure = "2023-12-25";
         final int maxFare = 2000000;
 
-        final String url = api +
+        final String apiUrl = api +
                 "?departureAirport="+departureAirport+
                 "&arrivalAirport="+arrivalAirport+
                 "&departure="+departure+
                 "&maxFare="+maxFare;
-        System.out.println("url = " + url);
-
         //when
-        final ResultActions result = mockMvc.perform(get(url)
+        final ResultActions result = mockMvc.perform(get(apiUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
         //then
