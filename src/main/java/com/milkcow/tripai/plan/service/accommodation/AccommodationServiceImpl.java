@@ -98,7 +98,7 @@ public class AccommodationServiceImpl implements AccommodationService {
      * @param endDate 숙박 종료일(yyyy-MM-dd 형식)
      * @return AccommodationData {@link AccommodationData}
      */
-    private AccommodationData parseAccommodationData(JsonNode accommodation, String startDate, String endDate) {
+    private static AccommodationData parseAccommodationData(JsonNode accommodation, String startDate, String endDate) {
 
         String name = accommodation.path("property").get("name").asText();
         double lat = accommodation.path("property").get("latitude").asDouble();
