@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum PlanResult implements ResultProvider {
+public enum PlanGetResult implements ResultProvider {
     OK_FLIGHT_PLAN(200, HttpStatus.OK, "항공권 조회 성공"),
     OK_ACCOMMODATION_PLAN(200, HttpStatus.OK, "숙박 조회 성공"),
     OK_RESTAURANT_PLAN(200, HttpStatus.OK, "맛집 조회 성공"),
