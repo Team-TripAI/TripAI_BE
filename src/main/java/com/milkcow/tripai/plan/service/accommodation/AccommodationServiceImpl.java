@@ -3,10 +3,13 @@ package com.milkcow.tripai.plan.service.accommodation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.milkcow.tripai.global.exception.GeneralException;
+import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.plan.dto.AccommodationData;
 import com.milkcow.tripai.plan.dto.AccommodationDataDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanResult;
+import com.milkcow.tripai.plan.util.DateUtil;
 import java.util.ArrayList;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -43,7 +47,8 @@ public class AccommodationServiceImpl implements AccommodationService {
 
             HttpEntity<JSONObject> requestEntity = new HttpEntity<>(headers);
 
-            ResponseEntity<String> destinationResponse = restTemplate.exchange(searchDestinationUrl, HttpMethod.GET, requestEntity,
+            ResponseEntity<String> destinationResponse = restTemplate.exchange(searchDestinationUrl, HttpMethod.GET,
+                    requestEntity,
                     String.class);
             if (destinationResponse.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
@@ -61,12 +66,12 @@ public class AccommodationServiceImpl implements AccommodationService {
                 throw new PlanException(PlanResult.ACCOMMODATION_SEARCH_API_REQUEST_FAILED);
             }
             JsonNode accommodationJson = objectMapper.readTree(hotelResponse.getBody());
-            if(!accommodationJson.get("status").asBoolean()){
+            if (!accommodationJson.get("status").asBoolean()) {
                 throw new PlanException(PlanResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
             }
             JsonNode accommodationList = accommodationJson.path("data").path("hotels");
 
-            for(JsonNode acc : accommodationList){
+            for (JsonNode acc : accommodationList) {
                 AccommodationData accommodationData = parseAccommodationData(acc, startDate, endDate);
                 accommodationDataList.add(accommodationData);
             }
@@ -77,17 +82,22 @@ public class AccommodationServiceImpl implements AccommodationService {
                     .build();
 
         } catch (JsonProcessingException e) {
-            throw new PlanException(PlanResult.ACCOMMODATION_API_RESPONSE_INVALID);
+            throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
+        } catch (HttpClientErrorException e) {
+            throw new PlanException(PlanResult.ACCOMMODATION_API_KEY_LIMIT_EXCESS);
         }
     }
 
     private AccommodationData parseAccommodationData(JsonNode accommodation, String startDate, String endDate) {
+
         String name = accommodation.path("property").get("name").asText();
         double lat = accommodation.path("property").get("latitude").asDouble();
         double lng = accommodation.path("property").get("longitude").asDouble();
-        double price = accommodation.path("property").path("priceBreakdown").path("grossPrice").get("value")
-                .asDouble();
+        long price = accommodation.path("property").path("priceBreakdown").path("grossPrice").get("value")
+                .asLong();
         String image = accommodation.path("property").path("photoUrls").path(0).asText();
+
+        long duration = DateUtil.calculateDuration(startDate, endDate);
 
         return AccommodationData.builder()
                 .name(name)
@@ -96,9 +106,11 @@ public class AccommodationServiceImpl implements AccommodationService {
                 .startDate(startDate)
                 .endDate(endDate)
                 .price(price)
+                .avgPrice(price / duration)
                 .image(image)
                 .build();
     }
+
 
     private HttpHeaders setHeaders() {
         HttpHeaders headers = new HttpHeaders();

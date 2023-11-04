@@ -11,6 +11,7 @@ public class AccommodationData {
     private Double lng;
     private String startDate;
     private String endDate;
-    private Double price;
+    private Long price;
+    private Long avgPrice;
     private String image;
 }
