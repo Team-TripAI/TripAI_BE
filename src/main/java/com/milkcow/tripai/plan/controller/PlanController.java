@@ -102,6 +102,6 @@ public class PlanController {
         Pattern pattern = Pattern.compile("[^a-zA-Z0-9]");
         Matcher matcher = pattern.matcher(destination);
 
-        return !matcher.find();
+        return matcher.find();
     }
 }
