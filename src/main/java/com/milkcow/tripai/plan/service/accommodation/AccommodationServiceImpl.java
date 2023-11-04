@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 숙박 서비스 구현
+ */
 @Service
 public class AccommodationServiceImpl implements AccommodationService {
 
@@ -88,6 +91,13 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
     }
 
+    /**
+     * 숙박정보 Json을 객체로 파싱
+     * @param accommodation Json
+     * @param startDate 숙박 시작일(yyyy-MM-dd 형식)
+     * @param endDate 숙박 종료일(yyyy-MM-dd 형식)
+     * @return AccommodationData {@link AccommodationData}
+     */
     private AccommodationData parseAccommodationData(JsonNode accommodation, String startDate, String endDate) {
 
         String name = accommodation.path("property").get("name").asText();
@@ -112,6 +122,10 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
 
+    /**
+     * 헤더 설정
+     * @return {@link HttpHeaders}
+     */
     private HttpHeaders setHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-RapidAPI-Key", this.APIKEY);
@@ -120,10 +134,23 @@ public class AccommodationServiceImpl implements AccommodationService {
         return headers;
     }
 
+    /**
+     * 목적지 id를 얻기 위한 API URL 설정
+     * @param destination 목적지
+     * @return 목적지 id API URL
+     */
     private String setDestinationURL(String destination) {
         return SEARCH_DESTINATION_URL + "?query=" + destination;
     }
 
+    /**
+     * 호텔 정보를 얻기 위한 API URL 설정
+     * @param destId 목적지 id
+     * @param startDate 숙박 시작일
+     * @param endDate 숙박 종료일
+     * @param maxPrice 총 여행기간 중 숙박비
+     * @return 호텔 정보 API URL
+     */
     private String setHotelURL(long destId, String startDate, String endDate, int maxPrice) {
         String url = SEARCH_HOTELS_URL
                 + "?dest_id=" + destId
