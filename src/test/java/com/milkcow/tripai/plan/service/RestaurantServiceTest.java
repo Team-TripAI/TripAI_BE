@@ -1,6 +1,7 @@
-package com.milkcow.tripai.plan.service.restaurant;
+package com.milkcow.tripai.plan.service;
 
 import com.milkcow.tripai.plan.dto.RestaurantDataDto;
+import com.milkcow.tripai.plan.service.restaurant.RestaurantService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,10 @@ class RestaurantServiceTest {
     @Test
     public void 맛집_조회() throws Exception {
         //given
-        String destination = "seoul";
+        String destination = "tokyo";
         String startDate = "2023-12-25";
         String endDate = "2023-12-31";
-        int maxPrice = 150000;
+        int maxPrice = 1000000;
         //when
         RestaurantDataDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
                 maxPrice);
