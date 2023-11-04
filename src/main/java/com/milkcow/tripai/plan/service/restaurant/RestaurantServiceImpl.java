@@ -23,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 맛집 서비스 구현
+ */
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
     @Value("${API-keys.Restaurants.Typeahead-URL}")
@@ -92,6 +95,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
     }
 
+    /**
+     * 헤더 설정
+     * @return {@link HttpHeaders}
+     */
     private HttpHeaders setHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("content-type", "application/x-www-form-urlencoded");
@@ -101,26 +108,41 @@ public class RestaurantServiceImpl implements RestaurantService {
         return headers;
     }
 
-    private String setTypeaheadBody(String destination) {
+    /**
+     * 목적지 id를 얻기 위한 API body 설정
+     * @param destination 목적지(영어만 가능)
+     * @return 목적지 id API body
+     */
+    private static String setTypeaheadBody(String destination) {
         return "q=" + destination +
                 "&language=ko_KR";
     }
 
-    private String setRestaurantBody(String locationId) {
+    /**
+     * 맛집 정보를 얻기 위한 API body 설정
+     * @param locationId 목적지 id
+     * @return 맛집 정보  API body
+     */
+    private static String setRestaurantBody(String locationId) {
         return "location_id=" + locationId +
                 "&language=ko_KR" +
                 "&currency=KRW";
     }
 
-    private Optional<RestaurantData> parseRestaurantData(JsonNode restaurant, PriceRange range) {
+    /**
+     * 맛집 정보 Json을 객체로 파싱
+     * @param restaurant Json
+     * @param range {@link PriceRange} 가격범위 정보
+     * @return {@link RestaurantData}
+     */
+    private static Optional<RestaurantData> parseRestaurantData(JsonNode restaurant, PriceRange range) {
         String price = restaurant.get("price_level").asText();
         int dollarCount = price.split(" - ")[0].length();
 
-        System.out.println("price = " + price);
-        System.out.println("dollarCount = " + dollarCount);
-        System.out.println();
-
         if (!range.isInRange(dollarCount)) {
+            return Optional.empty();
+        }
+        if(!restaurant.has("latitude")){
             return Optional.empty();
         }
 
