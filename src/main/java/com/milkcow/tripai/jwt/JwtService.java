@@ -6,12 +6,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.milkcow.tripai.global.exception.GeneralException;
+import com.milkcow.tripai.global.exception.JwtException;
 import com.milkcow.tripai.global.result.ApiResult;
+import com.milkcow.tripai.global.result.JwtResult;
 import com.milkcow.tripai.member.domain.Member;
+import com.milkcow.tripai.member.exception.MemberException;
 import com.milkcow.tripai.member.repository.MemberRepository;
+import com.milkcow.tripai.member.result.MemberResult;
 import com.milkcow.tripai.security.MemberAdapter;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -40,11 +42,10 @@ public class JwtService {
 
     /**
      * JWT의 Subject와 Claim으로 email 사용 -> 클레임의 name을 "email"으로 설정 JWT의 헤더에 들어오는 값 : 'Authorization(Key) = Bearer {토큰}
-     * (Value)'
      */
 
     private static final String COOKIE_PATH = "/";
-    private static final String COOKIE_DOMAIN = "www.gooroom.site";
+    private static final String COOKIE_DOMAIN = "www.tripai.site";
 
     @Value("${jwt.header}")
     private String ACCESS_HEADER;
@@ -52,7 +53,9 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String SECRET;
 
-    private static final String REFRESH_HEADER = "Authorization_r";
+    private static final String REFRESH_HEADER = "Authorization_refresh";
+
+    private static final String ROLE_USER = "USER";
 
     private final MemberRepository memberRepository;
 
@@ -64,7 +67,6 @@ public class JwtService {
      * AccessToken 생성 메소드
      */
     public String createAccessToken(Authentication authentication) {
-        String authorities = "ROLE_USER";
 
         MemberAdapter memberAdapter = (MemberAdapter) authentication.getPrincipal();
 
@@ -73,9 +75,9 @@ public class JwtService {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .claim("id", memberAdapter.getMember().getId())
-                .claim("email", memberAdapter.getUsername())
+                .claim(AUTHORITIES_KEY, ROLE_USER)
+                .claim("user_id", memberAdapter.getMember().getId())
+                .claim("user_email", memberAdapter.getUsername())
                 .signWith(accessTokenProvider.key, SignatureAlgorithm.HS512)
                 .setExpiration(valid)
                 .compact();
@@ -118,10 +120,9 @@ public class JwtService {
         try {
             // 토큰 유효성 검사하는 데에 사용할 알고리즘이 있는 JWT verifier builder 반환
             return JWT.require(Algorithm.HMAC512(accessTokenProvider.key.getEncoded())).build().verify(accessToken)
-                    .getClaim("email").asString();
+                    .getClaim("user_email").asString();
         } catch (Exception e) {
-            log.error("액세스 토큰이 유효하지 않습니다.");
-            return e.toString();
+            throw new JwtException(JwtResult.INVALID_ACCESS_TOKEN);
         }
     }
 
@@ -164,9 +165,9 @@ public class JwtService {
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken);
         if (refreshTokenProvider.tokenValidityInMilliseconds > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Max age value is too large for int.");
+            throw new JwtException(JwtResult.INVALID_PERIOD);
         } else if (refreshTokenProvider.tokenValidityInMilliseconds < Integer.MIN_VALUE) {
-            throw new IllegalArgumentException("Max age value is too small for int.");
+            throw new JwtException(JwtResult.INVALID_PERIOD);
         }
         cookie.setMaxAge((int) refreshTokenProvider.tokenValidityInMilliseconds);
         cookie.setHttpOnly(true);
@@ -182,7 +183,8 @@ public class JwtService {
      */
     @Transactional
     public void updateRefreshToken(String email, String refreshToken) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberException(MemberResult.NOT_FOUND_MEMBER));
         member.updateRefreshToken(refreshToken);
     }
 
@@ -191,7 +193,7 @@ public class JwtService {
      * 로그아웃 시 쿠키 만료를 통한 Refresh Token 만료.
      *
      * @param response
-     * @param request
+     * @Param request
      */
     public void expireRefreshToken(HttpServletResponse response, HttpServletRequest request) {
         Cookie refreshCookie = Arrays.stream(request.getCookies())
@@ -199,7 +201,7 @@ public class JwtService {
                 .findFirst()
                 .orElse(null);
         if (refreshCookie == null) {
-            throw new GeneralException(ApiResult.BAD_REQUEST);//todo member exception 추가
+            throw new MemberException(MemberResult.NOT_FOUND_MEMBER);
         }
         refreshCookie.setMaxAge(0);
         refreshCookie.setHttpOnly(true);
@@ -217,9 +219,9 @@ public class JwtService {
         long now = System.currentTimeMillis();
         String email = decodedJWT.getSubject();
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new MemberException(MemberResult.NOT_FOUND_MEMBER));
         if (!member.getRefreshToken().equals(refreshToken)) {
-            throw new JWTVerificationException("유효하지 않은 Refresh Token 입니다.");
+            throw new JwtException(JwtResult.INVALID_REFRESH_TOKEN);
         }
         String accessToken = createAccessToken(authentication);
 

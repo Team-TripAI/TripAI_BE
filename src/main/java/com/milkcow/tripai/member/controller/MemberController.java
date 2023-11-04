@@ -8,6 +8,7 @@ import com.milkcow.tripai.member.domain.Member;
 import com.milkcow.tripai.member.dto.MemberSignupRequestDto;
 import com.milkcow.tripai.member.dto.MemberUpdateRequestDto;
 import com.milkcow.tripai.member.dto.MemberWithdrawRequestDto;
+import com.milkcow.tripai.member.exception.MemberException;
 import com.milkcow.tripai.member.result.MemberResult;
 import com.milkcow.tripai.member.service.MemberService;
 import com.milkcow.tripai.security.CustomUserDetails;
@@ -41,23 +42,33 @@ public class MemberController {
     /**
      * Email을 통한 회원가입
      *
-     * @param
-     * @throws Exception 중복회원 가입시 예외
+     * @param requestDto
      */
     @PostMapping("/signup/email")
     @Transactional
-    public ResponseDto createByEmail(@RequestBody MemberSignupRequestDto requestDto) throws Exception {
+    public ResponseDto createByEmail(@RequestBody MemberSignupRequestDto requestDto) {
 
-        Member member = memberService.emailSignUp(requestDto);
-        log.info("Create member by email: " + requestDto.getEmail());
+        memberService.emailSignUp(requestDto);
         return DataResponse.of(true, MemberResult.OK_SIGNUP);
     }
 
+
+    /**
+     * 회원 정보 수정
+     *
+     * @param userDetails
+     * @param requestDto
+     */
     @PostMapping("/users")
     @Transactional
     public ResponseDto updateMember(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody MemberUpdateRequestDto requestDto) throws Exception {
+            @RequestBody MemberUpdateRequestDto requestDto) {
+
+        /// TODO: 메서드 로직 중복 리펙터링
+        if (requestDto.getPw() == null) {
+            throw new MemberException(MemberResult.INVALID_INPUT);
+        }
 
         CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
                 userDetails.getUsername());
@@ -68,10 +79,14 @@ public class MemberController {
     }
 
     @DeleteMapping("/users")
+    @Transactional
     public ResponseDto withdrawMember(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody MemberWithdrawRequestDto requestDto) throws Exception {
 
+        if (requestDto.getPw() == null) {
+            throw new MemberException(MemberResult.INVALID_INPUT);
+        }
         CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
                 userDetails.getUsername());
         Member foundMember = customUserDetails.getMember();

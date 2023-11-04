@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 
-public class CustomAuthorizationFilter extends OncePerRequestFilter {
+public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final AuthenticationManager authenticationManager;
+
     private final MemberRepository memberRepository;
 
     private final JwtService jwtService;
@@ -34,8 +34,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     public CustomAuthorizationFilter(AuthenticationManager authenticationManager,
                                      MemberRepository memberRepository,
                                      JwtService jwtService) {
-//        super(authenticationManager);
-        this.authenticationManager = authenticationManager;
+
+        super(authenticationManager);
         this.memberRepository = memberRepository;
         this.jwtService = jwtService;
     }
@@ -47,8 +47,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
         String servletPath = request.getServletPath();
         String authorizationHeader = request.getHeader("Authorization");
-        logger.info("2. 인가");
-        logger.info("doFilterInternal");
 
         // 로그인, 리프레시 요청이라면 토큰 검사하지 않음
         if (servletPath.equals("/login") || servletPath.equals("/refresh")) {

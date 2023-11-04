@@ -1,8 +1,6 @@
 package com.milkcow.tripai.member.service;
 
 
-import com.milkcow.tripai.global.exception.GeneralException;
-import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.member.domain.Member;
 import com.milkcow.tripai.member.dto.MemberSignupRequestDto;
 import com.milkcow.tripai.member.dto.MemberUpdateRequestDto;
@@ -22,23 +20,32 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
 
-    public Member emailSignUp(MemberSignupRequestDto requestDto){
+    /**
+     * 이메일 회원가입
+     *
+     * @param requestDto
+     * @return 저장된 member
+     * @throws MemberException 중복회원 가입시 예외
+     */
 
-        //중복 회원 검사 (email / nickname)
+    public Member emailSignUp(MemberSignupRequestDto requestDto) {
+
         if (isDuplicated(requestDto.getEmail(), requestDto.getNickname())) {
-            throw new MemberException(MemberResult.ALREADY_EXIST_USER_EMAIL);
+            throw new MemberException(MemberResult.ALREADY_EXIST_USER);
         }
         Member member = requestDto.toEntity();
         memberRepository.save(member);
         return member;
     }
 
-    @Transactional
-    public void updateNickname(Long memberId, MemberUpdateRequestDto requestDto){
+    /**
+     * 닉네임 변경
+     *
+     * @param memberId
+     * @param requestDto
+     */
+    public void updateNickname(Long memberId, MemberUpdateRequestDto requestDto) {
 
-        if(requestDto.getPw() == null){
-            throw new MemberException(MemberResult.INVALID_INPUT);
-        }
         Member member = memberRepository.findById(memberId).get();
 
         if (!member.getPassword().matches(requestDto.getPw())) {
@@ -47,11 +54,14 @@ public class MemberService {
         requestDto.getNickname().ifPresent(member::updateNickname);
     }
 
-    public void withdraw(Long memberId, MemberWithdrawRequestDto requestDto){
+    /**
+     * 회원 탈퇴
+     *
+     * @param memberId
+     * @param requestDto
+     */
+    public void withdraw(Long memberId, MemberWithdrawRequestDto requestDto) {
 
-        if(requestDto.getPw() == null){
-            throw new MemberException(MemberResult.INVALID_INPUT);
-        }
         Member member = memberRepository.findById(memberId).get();
 
         if (!member.getPassword().matches(requestDto.getPw())) {
@@ -62,11 +72,15 @@ public class MemberService {
 
     }
 
-//
-//    public Member myPage(){
-//
-//    }
 
+    /**
+     * 이메일 중복검사
+     *
+     * @param email
+     * @param nickname
+     * @return true : 중복 존재
+     * @return false : 중복 없음
+     */
     private boolean isDuplicated(String email, String nickname) {
         return memberRepository.existsByEmailAndNickname(email, nickname);
 
