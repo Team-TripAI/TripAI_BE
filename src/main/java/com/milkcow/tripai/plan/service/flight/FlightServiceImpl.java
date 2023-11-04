@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Optional;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -61,11 +62,11 @@ public class FlightServiceImpl implements FlightService {
             JsonNode flightListJson = responseBody.path("data").path("flights");
 
             for (JsonNode flight : flightListJson) {
-                FlightData flightData = parseFlightData(departureAirport, arrivalAirport, departureDate, flight);
+                Optional<FlightData> flightData = parseFlightData(flight, departureAirport, arrivalAirport,
+                        departureDate,
+                        maxFare);
 
-                if (flightData.getFare() <= maxFare) {
-                    flightDataList.add(flightData);
-                }
+                flightData.ifPresent(flightDataList::add);
             }
 
             return FlightDataDto.builder()
@@ -74,14 +75,20 @@ public class FlightServiceImpl implements FlightService {
                     .build();
         } catch (JsonProcessingException | MalformedURLException | UnsupportedEncodingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
-        }catch (HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             throw new PlanException(PlanResult.FLIGHT_API_KEY_LIMIT_EXCESS);
         }
     }
 
-    private static FlightData parseFlightData(String departureAirport, String arrivalAirport, String departureDate,
-                                              JsonNode flight) {
+    private static Optional<FlightData> parseFlightData(JsonNode flight, String departureAirport, String arrivalAirport,
+                                                        String departureDate,
+                                                        int maxFare) {
         int fare = flight.path("purchaseLinks").path(0).get("totalPrice").asInt();
+
+        if (fare > maxFare) {
+            return Optional.empty();
+        }
+
         String url = flight.path("purchaseLinks").path(0).get("url").asText();
         JsonNode schedule = flight.path("segments").path(0).path("legs").path(0);
         String airline = schedule.get("marketingCarrierCode").asText();
@@ -94,7 +101,7 @@ public class FlightServiceImpl implements FlightService {
         String arrivalDate = arrivalDateTime[0];
         String arrivalTime = arrivalDateTime[1];
 
-        return FlightData.builder()
+        FlightData flightData = FlightData.builder()
                 .id(flightId)
                 .departureAirport(departureAirport)
                 .arrivalAirport(arrivalAirport)
@@ -106,6 +113,7 @@ public class FlightServiceImpl implements FlightService {
                 .fare(fare)
                 .url(url)
                 .build();
+        return Optional.of(flightData);
     }
 
     private HttpHeaders setHeader() {
