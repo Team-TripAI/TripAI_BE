@@ -9,8 +9,6 @@ import com.milkcow.tripai.plan.dto.FlightData;
 import com.milkcow.tripai.plan.dto.FlightDataDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanResult;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 항공 서비스 구현
+ */
 @Service
 public class FlightServiceImpl implements FlightService {
 
@@ -73,13 +74,23 @@ public class FlightServiceImpl implements FlightService {
                     .flightCount(flightDataList.size())
                     .flightDataList(flightDataList)
                     .build();
-        } catch (JsonProcessingException | MalformedURLException | UnsupportedEncodingException e) {
+        } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         } catch (HttpClientErrorException e) {
             throw new PlanException(PlanResult.FLIGHT_API_KEY_LIMIT_EXCESS);
         }
     }
 
+    /**
+     * 항공 정보 Json을 객체로 파싱
+     *
+     * @param flight           Json
+     * @param departureAirport 출발 공항 명(IATA 코드)
+     * @param arrivalAirport   도착 공항 명(IATA 코드)
+     * @param departureDate    출발 일자(yyyy-MM-dd 형식)명
+     * @param maxFare          최대 항공비
+     * @return {@link FlightData}
+     */
     private static Optional<FlightData> parseFlightData(JsonNode flight, String departureAirport, String arrivalAirport,
                                                         String departureDate,
                                                         int maxFare) {
@@ -116,6 +127,11 @@ public class FlightServiceImpl implements FlightService {
         return Optional.of(flightData);
     }
 
+    /**
+     * 헤더 설정
+     *
+     * @return {@link HttpHeaders}
+     */
     private HttpHeaders setHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-RapidAPI-Key", this.APIKEY);
@@ -124,8 +140,15 @@ public class FlightServiceImpl implements FlightService {
         return headers;
     }
 
-    private String setURL(String departureAirport, String arrivalAirport, String departureDate)
-            throws UnsupportedEncodingException, MalformedURLException {
+    /**
+     * 항공권 정보를 얻기 위한 API URL  설정
+     *
+     * @param departureAirport 출발 공항 명(IATA 코드)
+     * @param arrivalAirport   도착 공항 명(IATA 코드)
+     * @param departureDate    출발 일자(yyyy-MM-dd 형식)명
+     * @return 항공권 정보 AIP URL
+     */
+    private String setURL(String departureAirport, String arrivalAirport, String departureDate) {
         String url = this.BASE_URL
                 + "?sourceAirportCode=" + URLEncoder.encode(departureAirport, StandardCharsets.UTF_8)
                 + "&destinationAirportCode=" + URLEncoder.encode(arrivalAirport, StandardCharsets.UTF_8)
