@@ -13,7 +13,8 @@ public enum PlanResult implements ResultProvider {
     OK_RESTAURANT_PLAN(200, HttpStatus.OK, "맛집 조회 성공"),
     OK_ATTRACTION_PLAN(200, HttpStatus.OK, "명소 조회 성공"),
 
-    INVALID_DATE(410, HttpStatus.NOT_FOUND, "유효하지 않은 날짜 형식"),
+    INVALID_DATE(410, HttpStatus.BAD_REQUEST, "유효하지 않은 날짜 형식"),
+    INVALID_RESTAURANT_DESTINATION(410, HttpStatus.BAD_REQUEST, "유효하지 않은 목적지 형식"),
 
     FLIGHT_API_KEY_LIMIT_EXCESS(540, HttpStatus.UNAUTHORIZED, "항공권 API 만료"),
     ACCOMMODATION_API_KEY_LIMIT_EXCESS(540, HttpStatus.UNAUTHORIZED, "숙박 API 만료"),
