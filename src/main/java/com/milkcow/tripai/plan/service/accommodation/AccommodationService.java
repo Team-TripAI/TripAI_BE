@@ -12,7 +12,7 @@ public interface AccommodationService {
      * @param startDate 숙박 시작일(yyyy-MM-dd 형식)
      * @param endDate 숙박 종료일(yyyy-MM-dd 형식)
      * @param maxPrice 총 여행기간 중 숙박비
-     * @return AccommodationDataDto {@link AccommodationDataDto}
+     * @return {@link AccommodationDataDto}
      */
     AccommodationDataDto getAccommodationData(String destination, String startDate, String endDate, int maxPrice);
 }
