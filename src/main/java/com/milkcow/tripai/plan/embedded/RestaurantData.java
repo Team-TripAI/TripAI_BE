@@ -1,6 +1,6 @@
-package com.milkcow.tripai.plan.dto;
+package com.milkcow.tripai.plan.embedded;
 
-import com.milkcow.tripai.plan.embedded.RestaurantHour;
+import com.milkcow.tripai.plan.embedded.PlaceHour;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +12,6 @@ public class RestaurantData {
     private Double lat;
     private Double lng;
     private String price;
-    private List<RestaurantHour> hours;
+    private List<PlaceHour> hours;
     private String image;
 }

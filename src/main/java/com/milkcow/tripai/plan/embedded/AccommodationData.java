@@ -1,4 +1,4 @@
-package com.milkcow.tripai.plan.dto;
+package com.milkcow.tripai.plan.embedded;
 
 import lombok.Builder;
 import lombok.Data;
