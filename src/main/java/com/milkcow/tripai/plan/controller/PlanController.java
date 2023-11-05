@@ -2,11 +2,13 @@ package com.milkcow.tripai.plan.controller;
 
 import com.milkcow.tripai.global.dto.DataResponse;
 import com.milkcow.tripai.plan.dto.AccommodationDataDto;
+import com.milkcow.tripai.plan.dto.AttractionDataDto;
 import com.milkcow.tripai.plan.dto.FlightDataDto;
 import com.milkcow.tripai.plan.dto.RestaurantDataDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanGetResult;
 import com.milkcow.tripai.plan.service.accommodation.AccommodationService;
+import com.milkcow.tripai.plan.service.attraction.AttractionService;
 import com.milkcow.tripai.plan.service.flight.FlightService;
 import com.milkcow.tripai.plan.service.restaurant.RestaurantService;
 import com.milkcow.tripai.plan.util.DateUtil;
@@ -29,6 +31,7 @@ public class PlanController {
     private final FlightService flightService;
     private final AccommodationService accommodationService;
     private final RestaurantService restaurantService;
+    private final AttractionService attractionService;
 
     /**
      * 항공권 정보를 가져온다.
@@ -96,6 +99,22 @@ public class PlanController {
         RestaurantDataDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
                 maxPrice);
         return DataResponse.create(restaurantData, PlanGetResult.OK_RESTAURANT_PLAN);
+    }
+
+    /**
+     * 해외 명소 정보를 가져온다.
+     * @param destination 목적지(영어만 가능, 3글자 이상)
+     * @param maxPrice 최대 명소 비용
+     * @return {@link AttractionDataDto}
+     */
+    @GetMapping("/attraction/international")
+    public DataResponse<AttractionDataDto> getAttractionPlan(@RequestParam String destination,
+                                                             @RequestParam(defaultValue = "0x7fffffff") int maxPrice){
+        if(validateRestaurantDestination(destination)){
+            throw new PlanException(PlanGetResult.INVALID_RESTAURANT_DESTINATION);
+        }
+        AttractionDataDto attractionData = attractionService.getAttractionData(destination, maxPrice);
+        return DataResponse.create(attractionData, PlanGetResult.OK_ATTRACTION_PLAN);
     }
 
     private static boolean validateRestaurantDestination(String destination){

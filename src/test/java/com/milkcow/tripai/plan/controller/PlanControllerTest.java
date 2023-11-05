@@ -174,4 +174,26 @@ class PlanControllerTest {
         String contentAsString = result.andReturn().getResponse().getContentAsString();
         System.out.println("result.andReturn().getResponse() = " + contentAsString);
     }
+
+    @Test
+    public void 해외명소_조회_컨트롤러() throws Exception {
+        //given
+        final String api = "/plan/budget/attraction/international";
+        String destination = "tokyo";
+        final int maxPrice = 1500000;
+
+        final String apiUrl = api +
+                "?destination=" + destination +
+                "&maxPrice=" + maxPrice;
+        //when
+        ResultActions result = mockMvc.perform(
+                get(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+        //then
+        result.andExpect(status().isOk());
+        String contentAsString = result.andReturn().getResponse().getContentAsString();
+        System.out.println("result.andReturn().getResponse() = " + contentAsString);
+    }
 }
