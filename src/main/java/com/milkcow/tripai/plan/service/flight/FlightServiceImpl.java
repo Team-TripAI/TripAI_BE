@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.global.exception.GeneralException;
 import com.milkcow.tripai.global.result.ApiResult;
-import com.milkcow.tripai.plan.dto.FlightData;
+import com.milkcow.tripai.plan.embedded.FlightData;
 import com.milkcow.tripai.plan.dto.FlightDataDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanGetResult;
