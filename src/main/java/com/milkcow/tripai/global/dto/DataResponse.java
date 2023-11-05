@@ -3,6 +3,7 @@ package com.milkcow.tripai.global.dto;
 import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.global.result.ResultProvider;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * API 성공 시 컨트롤러에서 공통적으로 반환하는 클래스이다.
@@ -11,6 +12,7 @@ import lombok.Getter;
  * @param <T> API 성공 시 반환하는 데이터의 타입
  */
 @Getter
+@NoArgsConstructor(force = true)
 public class DataResponse<T> extends ResponseDto {
 
     private final T data;
