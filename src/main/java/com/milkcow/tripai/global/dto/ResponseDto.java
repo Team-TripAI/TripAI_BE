@@ -2,6 +2,7 @@ package com.milkcow.tripai.global.dto;
 
 import com.milkcow.tripai.global.result.ResultProvider;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import java.util.function.Predicate;
 @Getter
 @ToString
 @RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class ResponseDto {
 
     private final Integer code;
