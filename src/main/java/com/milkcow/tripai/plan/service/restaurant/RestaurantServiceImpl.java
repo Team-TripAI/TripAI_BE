@@ -5,14 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.global.exception.GeneralException;
 import com.milkcow.tripai.global.result.ApiResult;
-import com.milkcow.tripai.plan.dto.RestaurantData;
+import com.milkcow.tripai.plan.embedded.RestaurantData;
 import com.milkcow.tripai.plan.dto.RestaurantDataDto;
 import com.milkcow.tripai.plan.embedded.PriceRange;
-import com.milkcow.tripai.plan.embedded.RestaurantHour;
+import com.milkcow.tripai.plan.embedded.PlaceHour;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanGetResult;
 import com.milkcow.tripai.plan.util.DateUtil;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -91,7 +92,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         } catch (HttpClientErrorException e) {
-            System.out.println("e = " + e);
             throw new PlanException(PlanGetResult.RESTAURANT_API_KEY_LIMIT_EXCESS);
         }
     }
@@ -155,20 +155,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         double lat = Double.parseDouble(restaurant.get("latitude").asText());
         double lng = Double.parseDouble(restaurant.get("longitude").asText());
 
-        ArrayList<RestaurantHour> hourList = new ArrayList<>();
-
-        if(restaurant.has("hours")){
-            JsonNode hourListJson = restaurant.path("hours").get("week_ranges");
-            for (int i = 0; i < hourListJson.size(); i++) {
-                JsonNode h = hourListJson.get(i);
-
-                if (h.size() > 0) {
-                    int openTime = h.path(0).get("open_time").asInt();
-                    int closeTime = h.path(0).get("close_time").asInt();
-                    hourList.add(RestaurantHour.of(i, openTime, closeTime));
-                }
-            }
-        }
+        List<PlaceHour> hourList = PlaceHour.parseHoursList(restaurant);
 
         String image = restaurant.path("photo").path("images").path("small").get("url").asText();
 
