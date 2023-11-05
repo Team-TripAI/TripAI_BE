@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class FlightDataDto {
-    private int flightCount;
-    private List<FlightData> flightDataList;
+public class AttractionDataDto {
+    private int AttractionCount;
+    private List<AttractionData> attractionDataList;
 }
