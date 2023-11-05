@@ -8,6 +8,7 @@ import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.plan.dto.RestaurantData;
 import com.milkcow.tripai.plan.dto.RestaurantDataDto;
 import com.milkcow.tripai.plan.embedded.PriceRange;
+import com.milkcow.tripai.plan.embedded.RestaurantHour;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanGetResult;
 import com.milkcow.tripai.plan.util.DateUtil;
@@ -97,6 +98,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     /**
      * 헤더 설정
+     *
      * @return {@link HttpHeaders}
      */
     private HttpHeaders setHeaders() {
@@ -110,6 +112,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     /**
      * 목적지 id를 얻기 위한 API body 설정
+     *
      * @param destination 목적지(영어만 가능)
      * @return 목적지 id API body
      */
@@ -120,6 +123,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     /**
      * 맛집 정보를 얻기 위한 API body 설정
+     *
      * @param locationId 목적지 id
      * @return 맛집 정보  API body
      */
@@ -131,8 +135,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     /**
      * 맛집 정보 Json을 객체로 파싱
+     *
      * @param restaurant Json
-     * @param range {@link PriceRange} 가격범위 정보
+     * @param range      {@link PriceRange} 가격범위 정보
      * @return {@link RestaurantData}
      */
     private static Optional<RestaurantData> parseRestaurantData(JsonNode restaurant, PriceRange range) {
@@ -142,15 +147,29 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (!range.isInRange(dollarCount)) {
             return Optional.empty();
         }
-        if(!restaurant.has("latitude")){
+        if (!restaurant.has("latitude")) {
             return Optional.empty();
         }
 
         String name = restaurant.get("name").asText();
         double lat = Double.parseDouble(restaurant.get("latitude").asText());
         double lng = Double.parseDouble(restaurant.get("longitude").asText());
-        //TODO 영업시간 전달방식 결정
-        restaurant.path("hours").get("week_ranges");
+
+        ArrayList<RestaurantHour> hourList = new ArrayList<>();
+
+        if(restaurant.has("hours")){
+            JsonNode hourListJson = restaurant.path("hours").get("week_ranges");
+            for (int i = 0; i < hourListJson.size(); i++) {
+                JsonNode h = hourListJson.get(i);
+
+                if (h.size() > 0) {
+                    int openTime = h.path(0).get("open_time").asInt();
+                    int closeTime = h.path(0).get("close_time").asInt();
+                    hourList.add(RestaurantHour.of(i, openTime, closeTime));
+                }
+            }
+        }
+
         String image = restaurant.path("photo").path("images").path("small").get("url").asText();
 
         RestaurantData restaurantData = RestaurantData.builder()
@@ -158,8 +177,10 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .lat(lat)
                 .lng(lng)
                 .price(price)
+                .hours(hourList)
                 .image(image)
                 .build();
         return Optional.of(restaurantData);
     }
 }
+
