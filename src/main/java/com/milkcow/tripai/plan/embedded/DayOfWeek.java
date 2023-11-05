@@ -1,5 +1,8 @@
 package com.milkcow.tripai.plan.embedded;
 
+/**
+ * 요일 정의
+ */
 public enum DayOfWeek {
     SUN(0, "Sunday"),
     MON(1, "Monday"),
@@ -17,6 +20,11 @@ public enum DayOfWeek {
         this.dayName = dayName;
     }
 
+    /**
+     * 숫자에 따른 DayOfWeek 반환
+     * @param dayNum 일요일(0)부터 시작
+     * @return {@link DayOfWeek}
+     */
     public static DayOfWeek of(int dayNum) {
         switch (dayNum) {
             case 0:
