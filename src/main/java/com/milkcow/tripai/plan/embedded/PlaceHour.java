@@ -1,6 +1,7 @@
 package com.milkcow.tripai.plan.embedded;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -11,8 +12,11 @@ import lombok.Getter;
 @Getter
 public class PlaceHour {
 
+    @ApiModelProperty(value = "요일", example = "MON")
     private final DayOfWeek day;
+    @ApiModelProperty(value = "영업 시작 시간", example = "09:30")
     private final String open;
+    @ApiModelProperty(value = "영업 종료 시간", example = "23:45")
     private final String close;
 
     public PlaceHour(DayOfWeek day, String open, String close) {
@@ -23,8 +27,9 @@ public class PlaceHour {
 
     /**
      * 요일, 시간에 따른 RestaurantHour 반환
-     * @param dayOfWeek {@link DayOfWeek} 요일에 따른 번호
-     * @param openTotal 영업 시작 시간(분 단위)
+     *
+     * @param dayOfWeek  {@link DayOfWeek} 요일에 따른 번호
+     * @param openTotal  영업 시작 시간(분 단위)
      * @param closeTotal 영업 종료 시간(분 단위)
      * @return {@link PlaceHour}
      */
@@ -43,12 +48,13 @@ public class PlaceHour {
 
     /**
      * 맛집, 명소에서 영업시간 파싱 메서드
+     *
      * @param json results.data.[i] 형식
      * @return {@link PlaceHour}
      */
     public static List<PlaceHour> parseHoursList(JsonNode json) {
         ArrayList<PlaceHour> hourList = new ArrayList<>();
-        if(json.has("hours")){
+        if (json.has("hours")) {
             JsonNode hourListJson = json.path("hours").get("week_ranges");
             for (int i = 0; i < hourListJson.size(); i++) {
                 JsonNode h = hourListJson.get(i);
