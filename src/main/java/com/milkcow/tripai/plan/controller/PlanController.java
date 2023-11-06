@@ -162,6 +162,18 @@ public class PlanController {
      * @param maxPrice    최대 명소 비용
      * @return {@link AttractionDataDto}
      */
+    @ApiOperation(value = "해외 명소 정보 조회", notes = "여행지별 추천 명소추천 및 예산에 맞는 해당 명소에서 할 수 있는 활동 조회.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "destination", value = "목적지(영어만, 3글자 이상)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "maxPrice", value = "총 여행 기간 중 최대 명소 비용", dataType = "int", paramType = "query", example = "100000")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 420, message = "유효하지 않은 목적지 형식"),
+            @ApiResponse(code = 500, message = "서버 내부 에러"),
+            @ApiResponse(code = 510, message = "명소 API 장소 id 검색 요청 실패"),
+            @ApiResponse(code = 520, message = "명소 API 요청 실패"),
+            @ApiResponse(code = 540, message = "명소 API 만료")
+    })
     @GetMapping("/attraction/international")
     public DataResponse<AttractionDataDto> getAttractionPlan(@RequestParam String destination,
                                                              @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
