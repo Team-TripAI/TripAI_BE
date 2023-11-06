@@ -5,6 +5,7 @@ import com.milkcow.tripai.global.dto.DataResponse;
 import com.milkcow.tripai.global.dto.ResponseDto;
 import com.milkcow.tripai.jwt.JwtService;
 import com.milkcow.tripai.member.domain.Member;
+import com.milkcow.tripai.member.dto.MemberLoginRequestDto;
 import com.milkcow.tripai.member.dto.MemberSignupRequestDto;
 import com.milkcow.tripai.member.dto.MemberUpdateRequestDto;
 import com.milkcow.tripai.member.dto.MemberWithdrawRequestDto;
@@ -52,6 +53,11 @@ public class MemberController {
         return DataResponse.of(true, MemberResult.OK_SIGNUP);
     }
 
+
+    @PostMapping("/login")
+    public void fakeLogin(@RequestBody MemberLoginRequestDto requestDto) {
+        throw new IllegalStateException("Spring Security 필터로 구동되는 API 입니다.");
+    }
 
     /**
      * 회원 정보 수정
