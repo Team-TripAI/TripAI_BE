@@ -53,9 +53,9 @@ public class PlanController {
      */
     @ApiOperation(value = "항공권 조회", notes = "날짜에 맞는 항공권을 조회한다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "departureAirport", value = "출발 공항명(IATA 코드)", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "arrivalAirport", value = "도착 공항명(IATA 코드)", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "departure", value = "출발일자(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "departureAirport", value = "출발 공항명(IATA 코드)", required = true, dataType = "string", paramType = "query", example = "ICN"),
+            @ApiImplicitParam(name = "arrivalAirport", value = "도착 공항명(IATA 코드)", required = true, dataType = "string", paramType = "query", example = "NRT"),
+            @ApiImplicitParam(name = "departure", value = "출발일자(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query", example = "2023-12-25"),
             @ApiImplicitParam(name = "maxFare", value = "최대 항공비", dataType = "int", paramType = "query", example = "1000000")
     })
     @ApiResponses({
@@ -88,9 +88,9 @@ public class PlanController {
      */
     @ApiOperation(value = "숙박 정보 조회", notes = "날짜와 가격에 맞는 숙박 정보를 조회한다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "destination", value = "목적지(영어, 한글 무관)", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "startDate", value = "숙박 시작일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "endDate", value = "숙박 종료일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "destination", value = "목적지(영어, 한글 무관)", required = true, dataType = "string", paramType = "query", example = "도쿄"),
+            @ApiImplicitParam(name = "startDate", value = "숙박 시작일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query", example = "2023-12-25"),
+            @ApiImplicitParam(name = "endDate", value = "숙박 종료일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query", example = "2023-12-31"),
             @ApiImplicitParam(name = "maxPrice", value = "총 여행 기간 중 최대 숙박비", dataType = "int", paramType = "query", example = "100000")
     })
     @ApiResponses({
@@ -125,9 +125,9 @@ public class PlanController {
      */
     @ApiOperation(value = "맛집 정보 조회", notes = "여행 기간과 예산에 맞는 가격대의 맛집을 조회한다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "destination", value = "목적지(영어만, 3글자 이상)", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "startDate", value = "여행 시작일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "endDate", value = "여행 종료일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "destination", value = "목적지(영어만, 3글자 이상)", required = true, dataType = "string", paramType = "query", example = "tokyo"),
+            @ApiImplicitParam(name = "startDate", value = "여행 시작일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query", example = "2023-12-25"),
+            @ApiImplicitParam(name = "endDate", value = "여행 종료일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query", example = "2023-12-31"),
             @ApiImplicitParam(name = "maxPrice", value = "총 여행 기간 중 최대 식비", dataType = "int", paramType = "query", example = "100000")
     })
     @ApiResponses({
@@ -164,7 +164,7 @@ public class PlanController {
      */
     @ApiOperation(value = "해외 명소 정보 조회", notes = "여행지별 추천 명소추천 및 예산에 맞는 해당 명소에서 할 수 있는 활동 조회.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "destination", value = "목적지(영어만, 3글자 이상)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "destination", value = "목적지(영어만, 3글자 이상)", required = true, dataType = "string", paramType = "query", example = "tokyo"),
             @ApiImplicitParam(name = "maxPrice", value = "총 여행 기간 중 최대 명소 비용", dataType = "int", paramType = "query", example = "100000")
     })
     @ApiResponses({
