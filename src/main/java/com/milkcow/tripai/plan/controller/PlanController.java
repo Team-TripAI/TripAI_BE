@@ -52,17 +52,17 @@ public class PlanController {
      * @return {@link FlightDataDto}
      */
     @ApiOperation(value = "항공권 조회", notes = "날짜에 맞는 항공권을 조회한다.")
-    @ApiResponses({
-            @ApiResponse(code = 400, message = "날짜 형식 오류"),
-            @ApiResponse(code = 500, message = "서버 내부 에러"),
-            @ApiResponse(code = 510, message = "항공권 API요청 실패"),
-            @ApiResponse(code = 540, message = "항공권 API 만료")
-    })
     @ApiImplicitParams({
             @ApiImplicitParam(name = "departureAirport", value = "출발 공항명(IATA 코드)", required = true, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "arrivalAirport", value = "도착 공항명(IATA 코드)", required = true, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "departure", value = "출발일자(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "maxFare", value = "최대 항공비", dataType = "int", paramType = "query")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 400, message = "날짜 형식 오류"),
+            @ApiResponse(code = 500, message = "서버 내부 에러"),
+            @ApiResponse(code = 510, message = "항공권 API요청 실패"),
+            @ApiResponse(code = 540, message = "항공권 API 만료")
     })
     @GetMapping("/flight")
     public DataResponse<FlightDataDto> getFlightPlan(@RequestParam String departureAirport,
@@ -86,6 +86,20 @@ public class PlanController {
      * @param maxPrice    총 여행기간 중 숙박비
      * @return {@link AccommodationDataDto}
      */
+    @ApiOperation(value = "숙박 정보 조회", notes = "날짜와 가격에 맞는 숙박 정보를 조회한다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "destination", value = "목적지(영어, 한글 무관)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "startDate", value = "숙박 시작일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "endDate", value = "숙박 종료일(yyyy-MM-dd 형식)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "maxPrice", value = "총 여행 기간 중 최대 숙박비", required = true, dataType = "int", paramType = "query"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 400, message = "날짜 형식 오류"),
+            @ApiResponse(code = 500, message = "서버 내부 에러"),
+            @ApiResponse(code = 510, message = "숙박 API 장소 id 검색 요청 실패"),
+            @ApiResponse(code = 520, message = "숙박 API 요청 실패"),
+            @ApiResponse(code = 540, message = "숙박 API 만료")
+    })
     @GetMapping("/accommodation")
     public DataResponse<AccommodationDataDto> getAccommodationPlan(@RequestParam String destination,
                                                                    @RequestParam String startDate,
