@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.global.exception.GeneralException;
 import com.milkcow.tripai.global.result.ApiResult;
-import com.milkcow.tripai.plan.embedded.FlightData;
-import com.milkcow.tripai.plan.dto.FlightDataDto;
+import com.milkcow.tripai.plan.dto.flight.FlightSearchData;
+import com.milkcow.tripai.plan.dto.flight.FlightSearchResponseDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanGetResult;
 import java.net.URLEncoder;
@@ -38,10 +38,10 @@ public class FlightServiceImpl implements FlightService {
     private String APIHOST;
 
     @Override
-    public FlightDataDto getFlightData(String departureAirport, String arrivalAirport, String departureDate,
-                                       int maxFare) {
+    public FlightSearchResponseDto getFlightData(String departureAirport, String arrivalAirport, String departureDate,
+                                                 int maxFare) {
         try {
-            ArrayList<FlightData> flightDataList = new ArrayList<>();
+            ArrayList<FlightSearchData> flightSearchDataList = new ArrayList<>();
             RestTemplate restTemplate = new RestTemplate();
 
             // Request 헤더 설정
@@ -63,16 +63,16 @@ public class FlightServiceImpl implements FlightService {
             JsonNode flightListJson = responseBody.path("data").path("flights");
 
             for (JsonNode flight : flightListJson) {
-                Optional<FlightData> flightData = parseFlightData(flight, departureAirport, arrivalAirport,
+                Optional<FlightSearchData> flightData = parseFlightData(flight, departureAirport, arrivalAirport,
                         departureDate,
                         maxFare);
 
-                flightData.ifPresent(flightDataList::add);
+                flightData.ifPresent(flightSearchDataList::add);
             }
 
-            return FlightDataDto.builder()
-                    .flightCount(flightDataList.size())
-                    .flightDataList(flightDataList)
+            return FlightSearchResponseDto.builder()
+                    .flightCount(flightSearchDataList.size())
+                    .flightSearchDataList(flightSearchDataList)
                     .build();
         } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
@@ -89,11 +89,11 @@ public class FlightServiceImpl implements FlightService {
      * @param arrivalAirport   도착 공항 명(IATA 코드)
      * @param departureDate    출발 일자(yyyy-MM-dd 형식)명
      * @param maxFare          최대 항공비
-     * @return {@link FlightData}
+     * @return {@link FlightSearchData}
      */
-    private static Optional<FlightData> parseFlightData(JsonNode flight, String departureAirport, String arrivalAirport,
-                                                        String departureDate,
-                                                        int maxFare) {
+    private static Optional<FlightSearchData> parseFlightData(JsonNode flight, String departureAirport, String arrivalAirport,
+                                                              String departureDate,
+                                                              int maxFare) {
         int fare = flight.path("purchaseLinks").path(0).get("totalPrice").asInt();
 
         if (fare > maxFare) {
@@ -112,7 +112,7 @@ public class FlightServiceImpl implements FlightService {
         String arrivalDate = arrivalDateTime[0];
         String arrivalTime = arrivalDateTime[1];
 
-        FlightData flightData = FlightData.builder()
+        FlightSearchData flightSearchData = FlightSearchData.builder()
                 .id(flightId)
                 .departureAirport(departureAirport)
                 .arrivalAirport(arrivalAirport)
@@ -124,7 +124,7 @@ public class FlightServiceImpl implements FlightService {
                 .fare(fare)
                 .url(url)
                 .build();
-        return Optional.of(flightData);
+        return Optional.of(flightSearchData);
     }
 
     /**

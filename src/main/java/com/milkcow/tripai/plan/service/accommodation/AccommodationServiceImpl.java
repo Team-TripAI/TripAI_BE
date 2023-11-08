@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.global.exception.GeneralException;
 import com.milkcow.tripai.global.result.ApiResult;
-import com.milkcow.tripai.plan.embedded.AccommodationData;
-import com.milkcow.tripai.plan.dto.AccommodationDataDto;
+import com.milkcow.tripai.plan.dto.accommodation.AccommodationSearchData;
+import com.milkcow.tripai.plan.dto.accommodation.AccommodationSearchResponseDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanGetResult;
 import com.milkcow.tripai.plan.util.DateUtil;
@@ -38,10 +38,10 @@ public class AccommodationServiceImpl implements AccommodationService {
     private String APIHOST;
 
     @Override
-    public AccommodationDataDto getAccommodationData(String destination, String startDate, String endDate,
-                                                     int maxPrice) {
+    public AccommodationSearchResponseDto getAccommodationData(String destination, String startDate, String endDate,
+                                                               int maxPrice) {
         try {
-            ArrayList<AccommodationData> accommodationDataList = new ArrayList<>();
+            ArrayList<AccommodationSearchData> accommodationSearchDataList = new ArrayList<>();
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = setHeaders();
@@ -75,13 +75,13 @@ public class AccommodationServiceImpl implements AccommodationService {
             JsonNode accommodationList = accommodationJson.path("data").path("hotels");
 
             for (JsonNode acc : accommodationList) {
-                AccommodationData accommodationData = parseAccommodationData(acc, startDate, endDate);
-                accommodationDataList.add(accommodationData);
+                AccommodationSearchData accommodationSearchData = parseAccommodationData(acc, startDate, endDate);
+                accommodationSearchDataList.add(accommodationSearchData);
             }
 
-            return AccommodationDataDto.builder()
-                    .AccommodationCount(accommodationDataList.size())
-                    .accommodationDataList(accommodationDataList)
+            return AccommodationSearchResponseDto.builder()
+                    .AccommodationCount(accommodationSearchDataList.size())
+                    .accommodationSearchDataList(accommodationSearchDataList)
                     .build();
 
         } catch (JsonProcessingException e) {
@@ -96,9 +96,9 @@ public class AccommodationServiceImpl implements AccommodationService {
      * @param accommodation Json
      * @param startDate 숙박 시작일(yyyy-MM-dd 형식)
      * @param endDate 숙박 종료일(yyyy-MM-dd 형식)
-     * @return AccommodationData {@link AccommodationData}
+     * @return AccommodationData {@link AccommodationSearchData}
      */
-    private static AccommodationData parseAccommodationData(JsonNode accommodation, String startDate, String endDate) {
+    private static AccommodationSearchData parseAccommodationData(JsonNode accommodation, String startDate, String endDate) {
 
         String name = accommodation.path("property").get("name").asText();
         double lat = accommodation.path("property").get("latitude").asDouble();
@@ -109,7 +109,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         long duration = DateUtil.calculateDuration(startDate, endDate);
 
-        return AccommodationData.builder()
+        return AccommodationSearchData.builder()
                 .name(name)
                 .lat(lat)
                 .lng(lng)

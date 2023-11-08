@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.global.exception.GeneralException;
 import com.milkcow.tripai.global.result.ApiResult;
-import com.milkcow.tripai.plan.embedded.RestaurantData;
-import com.milkcow.tripai.plan.dto.RestaurantDataDto;
+import com.milkcow.tripai.plan.dto.restaurant.RestaurantSearchData;
+import com.milkcow.tripai.plan.dto.restaurant.RestaurantSearchResponseDto;
 import com.milkcow.tripai.plan.embedded.PriceRange;
 import com.milkcow.tripai.plan.embedded.PlaceHour;
 import com.milkcow.tripai.plan.exception.PlanException;
@@ -40,12 +40,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     private String APIHOST;
 
     @Override
-    public RestaurantDataDto getRestaurantData(String destination, String startDate, String endDate, int maxPrice) {
+    public RestaurantSearchResponseDto getRestaurantData(String destination, String startDate, String endDate, int maxPrice) {
         try {
             long duration = DateUtil.calculateDuration(startDate, endDate);
             PriceRange priceRange = PriceRange.of((int) (maxPrice / duration));
 
-            ArrayList<RestaurantData> restaurantDataList = new ArrayList<>();
+            ArrayList<RestaurantSearchData> restaurantSearchDataList = new ArrayList<>();
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = setHeaders();
@@ -80,13 +80,13 @@ public class RestaurantServiceImpl implements RestaurantService {
             JsonNode restaurantList = restaurantJson.path("results").path("data");
 
             for (JsonNode r : restaurantList) {
-                Optional<RestaurantData> restaurantData = parseRestaurantData(r, priceRange);
-                restaurantData.ifPresent(restaurantDataList::add);
+                Optional<RestaurantSearchData> restaurantData = parseRestaurantData(r, priceRange);
+                restaurantData.ifPresent(restaurantSearchDataList::add);
             }
 
-            return RestaurantDataDto.builder()
-                    .restaurantCount(restaurantDataList.size())
-                    .restaurantDataList(restaurantDataList)
+            return RestaurantSearchResponseDto.builder()
+                    .restaurantCount(restaurantSearchDataList.size())
+                    .restaurantSearchDataList(restaurantSearchDataList)
                     .build();
 
         } catch (JsonProcessingException e) {
@@ -138,9 +138,9 @@ public class RestaurantServiceImpl implements RestaurantService {
      *
      * @param restaurant Json
      * @param range      {@link PriceRange} 가격범위 정보
-     * @return {@link RestaurantData}
+     * @return {@link RestaurantSearchData}
      */
-    private static Optional<RestaurantData> parseRestaurantData(JsonNode restaurant, PriceRange range) {
+    private static Optional<RestaurantSearchData> parseRestaurantData(JsonNode restaurant, PriceRange range) {
         String price = restaurant.get("price_level").asText();
         int dollarCount = price.split(" - ")[0].length();
 
@@ -159,7 +159,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         String image = restaurant.path("photo").path("images").path("small").get("url").asText();
 
-        RestaurantData restaurantData = RestaurantData.builder()
+        RestaurantSearchData restaurantSearchData = RestaurantSearchData.builder()
                 .name(name)
                 .lat(lat)
                 .lng(lng)
@@ -167,7 +167,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .hours(hourList)
                 .image(image)
                 .build();
-        return Optional.of(restaurantData);
+        return Optional.of(restaurantSearchData);
     }
 }
 
