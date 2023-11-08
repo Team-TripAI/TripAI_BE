@@ -1,10 +1,10 @@
 package com.milkcow.tripai.plan.controller;
 
 import com.milkcow.tripai.global.dto.DataResponse;
-import com.milkcow.tripai.plan.dto.AccommodationDataDto;
-import com.milkcow.tripai.plan.dto.AttractionDataDto;
-import com.milkcow.tripai.plan.dto.FlightDataDto;
-import com.milkcow.tripai.plan.dto.RestaurantDataDto;
+import com.milkcow.tripai.plan.dto.accommodation.AccommodationSearchResponseDto;
+import com.milkcow.tripai.plan.dto.attraction.AttractionSearchResponseDto;
+import com.milkcow.tripai.plan.dto.flight.FlightSearchResponseDto;
+import com.milkcow.tripai.plan.dto.restaurant.RestaurantSearchResponseDto;
 import com.milkcow.tripai.plan.exception.PlanException;
 import com.milkcow.tripai.plan.result.PlanGetResult;
 import com.milkcow.tripai.plan.service.accommodation.AccommodationService;
@@ -49,7 +49,7 @@ public class PlanController {
      * @param arrivalAirport   도착 공항 명(IATA 코드)
      * @param departure        출발 일자(yyyy-MM-dd 형식)
      * @param maxFare          최대 항공비
-     * @return {@link FlightDataDto}
+     * @return {@link FlightSearchResponseDto}
      */
     @ApiOperation(value = "항공권 조회", notes = "날짜에 맞는 항공권을 조회한다.")
     @ApiImplicitParams({
@@ -65,14 +65,14 @@ public class PlanController {
             @ApiResponse(code = 540, message = "항공권 API 만료")
     })
     @GetMapping("/flight")
-    public DataResponse<FlightDataDto> getFlightPlan(@RequestParam String departureAirport,
-                                                     @RequestParam String arrivalAirport,
-                                                     @RequestParam String departure,
-                                                     @RequestParam(defaultValue = MAX_INTEGER) int maxFare) {
+    public DataResponse<FlightSearchResponseDto> getFlightPlan(@RequestParam String departureAirport,
+                                                               @RequestParam String arrivalAirport,
+                                                               @RequestParam String departure,
+                                                               @RequestParam(defaultValue = MAX_INTEGER) int maxFare) {
         if (!DateUtil.isValidDate(departure)) {
             throw new PlanException(PlanGetResult.INVALID_DATE);
         }
-        FlightDataDto flightData = flightService.getFlightData(departureAirport, arrivalAirport, departure,
+        FlightSearchResponseDto flightData = flightService.getFlightData(departureAirport, arrivalAirport, departure,
                 maxFare);
         return DataResponse.create(flightData, PlanGetResult.OK_FLIGHT_PLAN);
     }
@@ -84,7 +84,7 @@ public class PlanController {
      * @param startDate   숙박 시작일(yyyy-MM-dd 형식)
      * @param endDate     숙박 종료일(yyyy-MM-dd 형식)
      * @param maxPrice    총 여행기간 중 숙박비
-     * @return {@link AccommodationDataDto}
+     * @return {@link AccommodationSearchResponseDto}
      */
     @ApiOperation(value = "숙박 정보 조회", notes = "날짜와 가격에 맞는 숙박 정보를 조회한다.")
     @ApiImplicitParams({
@@ -101,14 +101,14 @@ public class PlanController {
             @ApiResponse(code = 540, message = "숙박 API 만료")
     })
     @GetMapping("/accommodation")
-    public DataResponse<AccommodationDataDto> getAccommodationPlan(@RequestParam String destination,
-                                                                   @RequestParam String startDate,
-                                                                   @RequestParam String endDate,
-                                                                   @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
+    public DataResponse<AccommodationSearchResponseDto> getAccommodationPlan(@RequestParam String destination,
+                                                                             @RequestParam String startDate,
+                                                                             @RequestParam String endDate,
+                                                                             @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
         if (!DateUtil.isValidDate(startDate) || !DateUtil.isValidDate(endDate)) {
             throw new PlanException(PlanGetResult.INVALID_DATE);
         }
-        AccommodationDataDto accommodationData = accommodationService.getAccommodationData(destination, startDate,
+        AccommodationSearchResponseDto accommodationData = accommodationService.getAccommodationData(destination, startDate,
                 endDate, maxPrice);
         return DataResponse.create(accommodationData, PlanGetResult.OK_ACCOMMODATION_PLAN);
     }
@@ -121,7 +121,7 @@ public class PlanController {
      * @param startDate   여행 시작일(yyyy-MM-dd 형식)
      * @param endDate     여행 종료일(yyyy-MM-dd 형식)
      * @param maxPrice    최대 식비
-     * @return {@link RestaurantDataDto}
+     * @return {@link RestaurantSearchResponseDto}
      */
     @ApiOperation(value = "맛집 정보 조회", notes = "여행 기간과 예산에 맞는 가격대의 맛집을 조회한다.")
     @ApiImplicitParams({
@@ -139,10 +139,10 @@ public class PlanController {
             @ApiResponse(code = 540, message = "맛집 API 만료")
     })
     @GetMapping("/restaurant")
-    public DataResponse<RestaurantDataDto> getRestaurantPlan(@RequestParam String destination,
-                                                             @RequestParam String startDate,
-                                                             @RequestParam String endDate,
-                                                             @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
+    public DataResponse<RestaurantSearchResponseDto> getRestaurantPlan(@RequestParam String destination,
+                                                                       @RequestParam String startDate,
+                                                                       @RequestParam String endDate,
+                                                                       @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
         if (!DateUtil.isValidDate(startDate) || !DateUtil.isValidDate(endDate)) {
             throw new PlanException(PlanGetResult.INVALID_DATE);
         }
@@ -150,7 +150,7 @@ public class PlanController {
         if (validateRestaurantDestination(destination)) {
             throw new PlanException(PlanGetResult.INVALID_RESTAURANT_DESTINATION);
         }
-        RestaurantDataDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
+        RestaurantSearchResponseDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
                 maxPrice);
         return DataResponse.create(restaurantData, PlanGetResult.OK_RESTAURANT_PLAN);
     }
@@ -160,7 +160,7 @@ public class PlanController {
      *
      * @param destination 목적지(영어만 가능, 3글자 이상)
      * @param maxPrice    최대 명소 비용
-     * @return {@link AttractionDataDto}
+     * @return {@link AttractionSearchResponseDto}
      */
     @ApiOperation(value = "해외 명소 정보 조회", notes = "여행지별 추천 명소추천 및 예산에 맞는 해당 명소에서 할 수 있는 활동 조회.")
     @ApiImplicitParams({
@@ -175,12 +175,12 @@ public class PlanController {
             @ApiResponse(code = 540, message = "명소 API 만료")
     })
     @GetMapping("/attraction/international")
-    public DataResponse<AttractionDataDto> getAttractionPlan(@RequestParam String destination,
-                                                             @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
+    public DataResponse<AttractionSearchResponseDto> getAttractionPlan(@RequestParam String destination,
+                                                                       @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
         if (validateRestaurantDestination(destination)) {
             throw new PlanException(PlanGetResult.INVALID_RESTAURANT_DESTINATION);
         }
-        AttractionDataDto attractionData = attractionService.getAttractionData(destination, maxPrice);
+        AttractionSearchResponseDto attractionData = attractionService.getAttractionData(destination, maxPrice);
         return DataResponse.create(attractionData, PlanGetResult.OK_ATTRACTION_PLAN);
     }
 

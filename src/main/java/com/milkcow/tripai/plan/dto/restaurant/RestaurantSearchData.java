@@ -1,5 +1,6 @@
-package com.milkcow.tripai.plan.embedded;
+package com.milkcow.tripai.plan.dto.restaurant;
 
+import com.milkcow.tripai.plan.embedded.PlaceHour;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import lombok.Builder;
@@ -7,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RestaurantData {
+public class RestaurantSearchData {
     @ApiModelProperty(value = "맛집명", example = "Gyopao Gyoza Roppongi")
     private String name;
     @ApiModelProperty(value = "위도", example = "35.663578")

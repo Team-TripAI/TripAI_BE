@@ -1,8 +1,6 @@
 package com.milkcow.tripai.plan.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.milkcow.tripai.plan.dto.AttractionDataDto;
+import com.milkcow.tripai.plan.dto.attraction.AttractionSearchResponseDto;
 import com.milkcow.tripai.plan.service.attraction.AttractionService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,9 +18,9 @@ class AttractionServiceTest {
         String destination = "tokyo";
         int maxPrice = 1000000;
         //when
-        AttractionDataDto attractionData = attractionService.getAttractionData(destination, maxPrice);
+        AttractionSearchResponseDto attractionData = attractionService.getAttractionData(destination, maxPrice);
         //then
         Assertions.assertThat(attractionData.getAttractionCount()).isPositive();
-        System.out.println("attractionData.getAttractionDataList() = " + attractionData.getAttractionDataList());
+        System.out.println("attractionData.getAttractionDataList() = " + attractionData.getAttractionSearchDataList());
     }
 }

@@ -1,6 +1,6 @@
 package com.milkcow.tripai.plan.service;
 
-import com.milkcow.tripai.plan.dto.RestaurantDataDto;
+import com.milkcow.tripai.plan.dto.restaurant.RestaurantSearchResponseDto;
 import com.milkcow.tripai.plan.service.restaurant.RestaurantService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,11 +21,11 @@ class RestaurantServiceTest {
         String endDate = "2023-12-31";
         int maxPrice = 1000000;
         //when
-        RestaurantDataDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
+        RestaurantSearchResponseDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
                 maxPrice);
         //then
         Assertions.assertThat(restaurantData.getRestaurantCount()).isPositive();
-        System.out.println("restaurantData.getRestaurantDataList() = " + restaurantData.getRestaurantDataList());
+        System.out.println("restaurantData.getRestaurantDataList() = " + restaurantData.getRestaurantSearchDataList());
     }
 
 }
