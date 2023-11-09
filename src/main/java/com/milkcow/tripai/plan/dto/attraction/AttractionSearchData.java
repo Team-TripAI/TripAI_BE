@@ -1,5 +1,7 @@
-package com.milkcow.tripai.plan.embedded;
+package com.milkcow.tripai.plan.dto.attraction;
 
+import com.milkcow.tripai.plan.embedded.AttractionOffer;
+import com.milkcow.tripai.plan.embedded.PlaceHour;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import lombok.Builder;
@@ -7,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AttractionData {
+public class AttractionSearchData {
     @ApiModelProperty(value = "명소 명", example = "Meiji Jingu Shrine")
     private String name;
     @ApiModelProperty(value = "위도", example = "35.676167")

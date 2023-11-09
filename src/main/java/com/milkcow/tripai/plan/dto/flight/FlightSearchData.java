@@ -1,4 +1,4 @@
-package com.milkcow.tripai.plan.embedded;
+package com.milkcow.tripai.plan.dto.flight;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class FlightData {
+public class FlightSearchData {
     @ApiModelProperty(value = "항공권 id", example = "YP101")
     private String id;
     @ApiModelProperty(value = "출발 공항", example = "ICN")
