@@ -1,6 +1,6 @@
 package com.milkcow.tripai.plan.service.flight;
 
-import com.milkcow.tripai.plan.dto.FlightDataDto;
+import com.milkcow.tripai.plan.dto.flight.FlightSearchResponseDto;
 
 /**
  * 항공권 정보를 가져오는 service
@@ -12,7 +12,7 @@ public interface FlightService {
      * @param arrivalAirport 도착 공항 명(IATA 코드)
      * @param departureDate 출발 일자(yyyy-MM-dd 형식)
      * @param maxFare 최대 항공비
-     * @return {@link FlightDataDto}
+     * @return {@link FlightSearchResponseDto}
      */
-    FlightDataDto getFlightData(String departureAirport, String arrivalAirport, String departureDate, int maxFare);
+    FlightSearchResponseDto getFlightData(String departureAirport, String arrivalAirport, String departureDate, int maxFare);
 }

@@ -1,6 +1,6 @@
 package com.milkcow.tripai.plan.service;
 
-import com.milkcow.tripai.plan.dto.FlightDataDto;
+import com.milkcow.tripai.plan.dto.flight.FlightSearchResponseDto;
 import com.milkcow.tripai.plan.service.flight.FlightService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,9 +17,9 @@ class FlightServiceTest {
     public void 항공권_조회() throws Exception{
         //given
         //when
-        FlightDataDto flightData = flightServiceAPI.getFlightData("GMP", "CJU", "2023-12-25", 987654321);
+        FlightSearchResponseDto flightData = flightServiceAPI.getFlightData("GMP", "CJU", "2023-12-25", 987654321);
         //then
-        System.out.println("flightData.getFlightDataList() = " + flightData.getFlightDataList());
+        System.out.println("flightData.getFlightDataList() = " + flightData.getFlightSearchDataList());
         System.out.println("flightData.getFlightCount() = " + flightData.getFlightCount());
         Assertions.assertThat(flightData.getFlightCount()).isPositive();
     }

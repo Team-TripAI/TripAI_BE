@@ -1,4 +1,4 @@
-package com.milkcow.tripai.plan.embedded;
+package com.milkcow.tripai.plan.dto.accommodation;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AccommodationData {
+public class AccommodationSearchData {
     @ApiModelProperty(value = "숙박지 명", example = "Lodging Tokyo Ueno")
     private String name;
     @ApiModelProperty(value = "위도", example = "35.7176401814438")

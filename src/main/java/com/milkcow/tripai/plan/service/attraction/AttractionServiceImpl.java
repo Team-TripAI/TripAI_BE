@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.milkcow.tripai.global.exception.GeneralException;
 import com.milkcow.tripai.global.result.ApiResult;
-import com.milkcow.tripai.plan.embedded.AttractionData;
-import com.milkcow.tripai.plan.dto.AttractionDataDto;
+import com.milkcow.tripai.plan.dto.attraction.AttractionSearchData;
+import com.milkcow.tripai.plan.dto.attraction.AttractionSearchResponseDto;
 import com.milkcow.tripai.plan.embedded.AttractionOffer;
 import com.milkcow.tripai.plan.embedded.PlaceHour;
 import com.milkcow.tripai.plan.embedded.PriceRange;
@@ -44,9 +44,9 @@ public class AttractionServiceImpl implements AttractionService {
     private String APIHOST;
 
     @Override
-    public AttractionDataDto getAttractionData(String destination, int maxPrice) {
+    public AttractionSearchResponseDto getAttractionData(String destination, int maxPrice) {
         try {
-            ArrayList<AttractionData> attractionDataList = new ArrayList<>();
+            ArrayList<AttractionSearchData> attractionSearchDataList = new ArrayList<>();
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = setHeaders();
@@ -79,13 +79,13 @@ public class AttractionServiceImpl implements AttractionService {
             JsonNode attractionList = attractionJson.path("results").path("data");
 
             for (JsonNode a : attractionList) {
-                Optional<AttractionData> attractionData = parseRestaurantData(a, maxPrice);
-                attractionData.ifPresent(attractionDataList::add);
+                Optional<AttractionSearchData> attractionData = parseRestaurantData(a, maxPrice);
+                attractionData.ifPresent(attractionSearchDataList::add);
             }
 
-            return AttractionDataDto.builder()
+            return AttractionSearchResponseDto.builder()
                     .AttractionCount(attractionList.size())
-                    .attractionDataList(attractionDataList)
+                    .attractionSearchDataList(attractionSearchDataList)
                     .build();
 
         } catch (JsonProcessingException e) {
@@ -137,9 +137,9 @@ public class AttractionServiceImpl implements AttractionService {
      *
      * @param attraction Json
      * @param maxPrice   최대 명소 비용
-     * @return {@link AttractionData}
+     * @return {@link AttractionSearchData}
      */
-    private static Optional<AttractionData> parseRestaurantData(JsonNode attraction, int maxPrice) {
+    private static Optional<AttractionSearchData> parseRestaurantData(JsonNode attraction, int maxPrice) {
 
         if (!attraction.has("latitude")) {
             return Optional.empty();
@@ -165,7 +165,7 @@ public class AttractionServiceImpl implements AttractionService {
         List<PlaceHour> hourList = PlaceHour.parseHoursList(attraction);
         String image = attraction.path("photo").path("images").path("small").get("url").asText();
 
-        AttractionData attractionData = AttractionData.builder()
+        AttractionSearchData attractionSearchData = AttractionSearchData.builder()
                 .name(name)
                 .lat(lat)
                 .lng(lng)
@@ -176,7 +176,7 @@ public class AttractionServiceImpl implements AttractionService {
                 .image(image)
                 .build();
 
-        return Optional.of(attractionData);
+        return Optional.of(attractionSearchData);
     }
 
     private static List<AttractionOffer> parseOffer(JsonNode attraction, int maxPrice) {
