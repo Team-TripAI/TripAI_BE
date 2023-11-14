@@ -1,12 +1,15 @@
 package com.milkcow.tripai.member.domain;
 
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
-import javax.persistence.*;
 
 
 @Entity
@@ -30,15 +33,7 @@ public class Member {
     private String refreshToken;
 
 
-
     @Builder
-    public Member(Long id, String email, Password password, String nickname) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-    }
-
     public Member(String email, Password password, String nickname) {
         this.email = email;
         this.password = password;
@@ -53,7 +48,7 @@ public class Member {
         this.refreshToken = refreshToken;
     }
 
-    public void updateNickname(String updateNickname){
+    public void updateNickname(String updateNickname) {
         this.nickname = updateNickname;
     }
 }

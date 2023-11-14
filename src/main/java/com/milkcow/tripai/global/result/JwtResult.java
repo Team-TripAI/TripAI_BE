@@ -18,11 +18,11 @@ public enum JwtResult implements ResultProvider {
 
     INVALID_ACCESS_TOKEN(499, HttpStatus.UNAUTHORIZED, "유효하지 않은 ACCESS 토큰입니다."),
 
+    INVALID_REFRESH_TOKEN(498, HttpStatus.UNAUTHORIZED, "유효하지 않은 REFRESH 토큰입니다."),
+
     EXPIRED_TOKEN(489, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
 
-
-
-
+    INVALID_PERIOD(497, HttpStatus.EXPECTATION_FAILED, "토큰의 만료기간을 다시 설정해주세요."),
 
     ;
 
