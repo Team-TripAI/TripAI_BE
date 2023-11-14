@@ -72,6 +72,11 @@ public class MemberService {
 
     }
 
+    public Member getMemberByRefreshToken(String refreshToken) {
+
+        return memberRepository.findByRefreshToken(refreshToken);
+    }
+
 
     /**
      * 이메일 중복검사

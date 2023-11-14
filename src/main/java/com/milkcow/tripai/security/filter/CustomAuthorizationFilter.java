@@ -6,6 +6,7 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.milkcow.tripai.global.result.JwtResult;
 import com.milkcow.tripai.jwt.AccessTokenProvider;
 import com.milkcow.tripai.jwt.JwtService;
 import com.milkcow.tripai.member.exception.MemberException;
@@ -57,14 +58,20 @@ public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
         } else {
             try {
                 // 2. JWT 토큰을 검증해서 정상적인 사용자인지 확인
-                String jwtToken = jwtService.extractAccessToken(request);
-                String email = jwtService.extractEmail(jwtToken);
+                String accessToken = jwtService.extractAccessToken(request);
+                if (jwtService.isTokenExpired(accessToken)) {
+                    response.setStatus(JwtResult.EXPIRED_TOKEN.getCode());
+                    response.setContentType(APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding("utf-8");
+                }
+
+                String email = jwtService.extractEmail(accessToken);
 
                 if (email != null) {
                     memberRepository.findByEmail(email).orElseThrow(() ->
                             new MemberException(MemberResult.NOT_FOUND_MEMBER));
 
-                    Authentication authentication = AccessTokenProvider.getAuthentication(jwtToken);
+                    Authentication authentication = AccessTokenProvider.getAuthentication(accessToken);
 
                     // 시큐리티의 세션 영역에 접근하여 Authentication 객체 저장
                     SecurityContextHolder.getContext().setAuthentication(authentication);

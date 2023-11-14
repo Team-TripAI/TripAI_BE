@@ -5,6 +5,7 @@ import com.milkcow.tripai.global.dto.DataResponse;
 import com.milkcow.tripai.global.dto.ResponseDto;
 import com.milkcow.tripai.jwt.JwtService;
 import com.milkcow.tripai.member.domain.Member;
+import com.milkcow.tripai.member.dto.MemberLoginRequestDto;
 import com.milkcow.tripai.member.dto.MemberSignupRequestDto;
 import com.milkcow.tripai.member.dto.MemberUpdateRequestDto;
 import com.milkcow.tripai.member.dto.MemberWithdrawRequestDto;
@@ -21,15 +22,12 @@ import io.swagger.annotations.ApiResponses;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(value = "Member")
@@ -66,10 +64,10 @@ public class MemberController {
         return DataResponse.of(true, MemberResult.OK_SIGNUP);
     }
 
-//    @PostMapping("/login")
-//    public void fakeLogin(@RequestBody MemberLoginRequestDto requestDto) {
-//        throw new IllegalStateException("Spring Security 필터로 구동되는 API 입니다.");
-//    }
+    @PostMapping("/login")
+    public void fakeLogin(@RequestBody MemberLoginRequestDto requestDto) {
+        throw new IllegalStateException("Spring Security 필터로 구동되는 API 입니다.");
+    }
 
     /**
      * 회원 정보 수정
@@ -127,17 +125,20 @@ public class MemberController {
         return DataResponse.of(true, MemberResult.OK_WITHDRAW);
     }
 
-    /**
-     * 로그아웃 시 쿠키 만료 설정
-     *
-     * @param request
-     * @param response
-     */
-    @GetMapping("/signout")
-    @ResponseStatus(HttpStatus.OK)
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        jwtService.expireRefreshToken(response, request);
+    @PostMapping("/reissue")
+    @Transactional
+    @ApiOperation(value = "토큰 재발급", notes = "토큰 만료시 재발급을 진행한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "토큰 재발급 성공!"),
+            @ApiResponse(code = 500, message = "서버 내 오류")
+    })
+    public void refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+
+        jwtService.extractRefreshToken(request)
+                .ifPresent(refreshToken -> {
+                    Member member = memberService.getMemberByRefreshToken(refreshToken);
+                    jwtService.reissue(response, member.getEmail(), member.getId(), refreshToken);
+                });
 
     }
-
 }
