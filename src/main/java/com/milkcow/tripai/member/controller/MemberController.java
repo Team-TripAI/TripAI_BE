@@ -14,6 +14,8 @@ import com.milkcow.tripai.member.result.MemberResult;
 import com.milkcow.tripai.member.service.MemberService;
 import com.milkcow.tripai.security.CustomUserDetails;
 import com.milkcow.tripai.security.CustomUserDetailsService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(value = "Member")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -45,6 +48,7 @@ public class MemberController {
      *
      * @param requestDto
      */
+    @ApiOperation(value = "Email을 통한 회원가입")
     @PostMapping("/signup/email")
     @Transactional
     public ResponseDto createByEmail(@RequestBody MemberSignupRequestDto requestDto) {
@@ -65,6 +69,7 @@ public class MemberController {
      * @param userDetails
      * @param requestDto
      */
+    @ApiOperation(value = "회원 정보 수정")
     @PostMapping("/users")
     @Transactional
     public ResponseDto updateMember(
@@ -84,6 +89,7 @@ public class MemberController {
         return DataResponse.of(true, MemberResult.OK_NICKNAME_UPDATE);
     }
 
+    @ApiOperation(value = "회원 탈퇴")
     @DeleteMapping("/users")
     @Transactional
     public ResponseDto withdrawMember(
