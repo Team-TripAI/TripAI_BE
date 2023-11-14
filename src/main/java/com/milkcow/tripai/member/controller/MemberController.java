@@ -15,7 +15,10 @@ import com.milkcow.tripai.member.service.MemberService;
 import com.milkcow.tripai.security.CustomUserDetails;
 import com.milkcow.tripai.security.CustomUserDetailsService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -43,20 +46,29 @@ public class MemberController {
 
     private final JwtService jwtService;
 
+
     /**
      * Email을 통한 회원가입
      *
      * @param requestDto
      */
-    @ApiOperation(value = "Email을 통한 회원가입")
+
     @PostMapping("/signup/email")
     @Transactional
+    @ApiOperation(value = "Email을 통한 회원가입", notes = "이메일을 아이디로 사용한 회원가입이다.")
+    @ApiImplicitParam(name = "MemberSignupRequestDto", value = "이메일, 비밀번호, 닉네임",
+            required = true, paramType = "Body")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "회원가입 성공!"),
+            @ApiResponse(code = 419, message = "이미 존재하는 회원입니다."),
+            @ApiResponse(code = 500, message = "서버 내 오류")
+    }
+    )
     public ResponseDto createByEmail(@RequestBody MemberSignupRequestDto requestDto) {
 
         memberService.emailSignUp(requestDto);
         return DataResponse.of(true, MemberResult.OK_SIGNUP);
     }
-
 
     @PostMapping("/login")
     public void fakeLogin(@RequestBody MemberLoginRequestDto requestDto) {
@@ -69,9 +81,16 @@ public class MemberController {
      * @param userDetails
      * @param requestDto
      */
-    @ApiOperation(value = "회원 정보 수정")
+
     @PostMapping("/users")
     @Transactional
+    @ApiOperation(value = "회원 정보 수정", notes = "현재는 Nickname만 수정 가능하다.")
+    @ApiImplicitParam(name = "MemberUpdateRequestDto", value = "닉네임, 비밀번호", required = true, paramType = "Body")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "닉네임 수정 성공!"),
+            @ApiResponse(code = 500, message = "서버 내 오류")
+    }
+    )
     public ResponseDto updateMember(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody MemberUpdateRequestDto requestDto) {
@@ -89,9 +108,14 @@ public class MemberController {
         return DataResponse.of(true, MemberResult.OK_NICKNAME_UPDATE);
     }
 
-    @ApiOperation(value = "회원 탈퇴")
     @DeleteMapping("/users")
     @Transactional
+    @ApiOperation(value = "회원 탈퇴", notes = "회원 탈퇴를 진행한다.")
+    @ApiImplicitParam(name = "MemberWithdrawRequestDto", value = "비밀번호", required = true, paramType = "Body")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "회원탈퇴 성공!"),
+            @ApiResponse(code = 500, message = "서버 내 오류")
+    })
     public ResponseDto withdrawMember(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody MemberWithdrawRequestDto requestDto) throws Exception {
