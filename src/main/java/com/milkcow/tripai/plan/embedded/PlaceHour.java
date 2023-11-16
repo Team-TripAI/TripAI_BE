@@ -26,7 +26,7 @@ public class PlaceHour {
     }
 
     /**
-     * 요일, 시간에 따른 RestaurantHour 반환
+     * 요일, 시간에 따른 PlaceHour 반환
      *
      * @param dayOfWeek  {@link DayOfWeek} 요일에 따른 번호
      * @param openTotal  영업 시작 시간(분 단위)
@@ -43,6 +43,18 @@ public class PlaceHour {
         String close = closeHour + ":" + closeMinute;
         DayOfWeek day = DayOfWeek.of(dayOfWeek);
 
+        return new PlaceHour(day, open, close);
+    }
+
+    /**
+     * 요일, 시간(문자열)에 따른 PlaceHour반환
+     * @param dayOfWeek {@link DayOfWeek} 요일에 따른 번호
+     * @param open 영업 시작 시간(문자열)
+     * @param close 영업 종료 시간(문자열
+     * @return {@link PlaceHour}
+     */
+    public static PlaceHour of(int dayOfWeek, String open, String close){
+        DayOfWeek day = DayOfWeek.of(dayOfWeek);
         return new PlaceHour(day, open, close);
     }
 
