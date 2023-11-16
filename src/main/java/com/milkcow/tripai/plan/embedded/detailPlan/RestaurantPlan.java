@@ -1,19 +1,33 @@
 package com.milkcow.tripai.plan.embedded.detailPlan;
 
 import com.milkcow.tripai.plan.embedded.PlaceHour;
+import com.milkcow.tripai.plan.util.HoursConverter;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embeddable;
-import lombok.AllArgsConstructor;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 맛집 정보 저장 값타입
+ */
 @Embeddable
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantPlan {
+public class RestaurantPlan extends CommonDetailPlan{
+    @Convert(converter = HoursConverter.class)
     private List<PlaceHour> hours;
+    @Column(length = 350)
     private String image;
+
+    @Builder
+    public RestaurantPlan(@NotNull String name, double lat, double lng, List<PlaceHour> hours,
+                          String image) {
+        super(name, lat, lng);
+        this.hours = hours;
+        this.image = image;
+    }
 }
