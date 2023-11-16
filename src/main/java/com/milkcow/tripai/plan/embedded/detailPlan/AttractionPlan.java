@@ -1,5 +1,7 @@
 package com.milkcow.tripai.plan.embedded.detailPlan;
 
+import com.milkcow.tripai.plan.embedded.PlaceHour;
+import java.util.List;
 import javax.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttractionPlan extends CommonDetailPlan{
-    private String hours;
+    private List<PlaceHour> hours;
     private String image;
 }
