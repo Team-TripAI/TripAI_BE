@@ -26,6 +26,7 @@ public class PlanService {
      * @param planDto {@link PlanDto} 일정 등록 DTO
      * @return 해당 일정의 id
      */
+    @Transactional
     public long create(Member member, PlanDto planDto) {
         Plan plan = Plan.of(planDto, member);
         Plan saved_plan = planRepository.save(plan);
@@ -56,6 +57,7 @@ public class PlanService {
      * @param planId 일정 id
      * @throws PlanException 등록한 사용자가 아닌 다른 사용자가 삭제하려는 경우
      */
+    @Transactional
     public void delete(Member member, Long planId) {
         Plan plan = planRepository.findPlanById(planId)
                 .orElseThrow(() -> new PlanException(PlanResult.PLAN_NOT_FOUND));
