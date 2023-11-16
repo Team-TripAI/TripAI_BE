@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/plan/budget")
-public class PlanController {
+public class PlanSearchController {
 
     private final FlightService flightService;
     private final AccommodationService accommodationService;
