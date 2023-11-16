@@ -2,6 +2,7 @@ package com.milkcow.tripai.plan.util;
 
 import com.milkcow.tripai.plan.embedded.PlaceHour;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.AttributeConverter;
 
@@ -9,6 +10,8 @@ import javax.persistence.AttributeConverter;
  * {@link PlaceHour} 리스트를 문자열로 DB에 저장
  */
 public class HoursConverter implements AttributeConverter<List<PlaceHour>, String> {
+
+    private static final String EMPTY = "null";
 
     /**
      * DB저장 시 문자열로 변환<p>
@@ -19,6 +22,9 @@ public class HoursConverter implements AttributeConverter<List<PlaceHour>, Strin
      */
     @Override
     public String convertToDatabaseColumn(List<PlaceHour> attribute) {
+        if(attribute.isEmpty()){
+            return EMPTY;
+        }
         StringBuilder hoursDb = new StringBuilder();
         for (PlaceHour hour : attribute) {
             int day = hour.getDay().getDayNum();
@@ -37,6 +43,10 @@ public class HoursConverter implements AttributeConverter<List<PlaceHour>, Strin
      */
     @Override
     public List<PlaceHour> convertToEntityAttribute(String dbData) {
+        if(dbData.equals(EMPTY)){
+            return Collections.emptyList();
+        }
+
         List<PlaceHour> placeHours = new ArrayList<>();
         String[] hoursString = dbData.split(",");
         for(String hour : hoursString){
