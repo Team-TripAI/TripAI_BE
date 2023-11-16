@@ -11,7 +11,7 @@ import com.milkcow.tripai.plan.embedded.AttractionOffer;
 import com.milkcow.tripai.plan.embedded.PlaceHour;
 import com.milkcow.tripai.plan.embedded.PriceRange;
 import com.milkcow.tripai.plan.exception.PlanException;
-import com.milkcow.tripai.plan.result.PlanGetResult;
+import com.milkcow.tripai.plan.result.PlanSearchResult;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +58,7 @@ public class AttractionServiceImpl implements AttractionService {
             ResponseEntity<String> typeaheadResponse = restTemplate.exchange(SEARCH_DESTINATION_URL, HttpMethod.POST,
                     typeaheadRequestEntity, String.class);
             if (typeaheadResponse.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanGetResult.ATTRACTION_DESTINATION_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.ATTRACTION_DESTINATION_API_REQUEST_FAILED);
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -73,7 +73,7 @@ public class AttractionServiceImpl implements AttractionService {
             ResponseEntity<String> attractionResponse = restTemplate.exchange(SEARCH_ATTRACTION_URL, HttpMethod.POST,
                     attractionRequestEntity, String.class);
             if (attractionResponse.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanGetResult.ATTRACTION_SEARCH_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.ATTRACTION_SEARCH_API_REQUEST_FAILED);
             }
             JsonNode attractionJson = objectMapper.readTree(attractionResponse.getBody());
             JsonNode attractionList = attractionJson.path("results").path("data");
@@ -91,7 +91,7 @@ public class AttractionServiceImpl implements AttractionService {
         } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         } catch (HttpClientErrorException e) {
-            throw new PlanException(PlanGetResult.ATTRACTION_API_KEY_LIMIT_EXCESS);
+            throw new PlanException(PlanSearchResult.ATTRACTION_API_KEY_LIMIT_EXCESS);
         }
     }
 

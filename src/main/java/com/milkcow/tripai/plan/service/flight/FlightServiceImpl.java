@@ -8,7 +8,7 @@ import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.plan.dto.flight.FlightSearchData;
 import com.milkcow.tripai.plan.dto.flight.FlightSearchResponseDto;
 import com.milkcow.tripai.plan.exception.PlanException;
-import com.milkcow.tripai.plan.result.PlanGetResult;
+import com.milkcow.tripai.plan.result.PlanSearchResult;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class FlightServiceImpl implements FlightService {
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
             if (response.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanGetResult.FLIGHT_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.FLIGHT_API_REQUEST_FAILED);
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -77,7 +77,7 @@ public class FlightServiceImpl implements FlightService {
         } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         } catch (HttpClientErrorException e) {
-            throw new PlanException(PlanGetResult.FLIGHT_API_KEY_LIMIT_EXCESS);
+            throw new PlanException(PlanSearchResult.FLIGHT_API_KEY_LIMIT_EXCESS);
         }
     }
 

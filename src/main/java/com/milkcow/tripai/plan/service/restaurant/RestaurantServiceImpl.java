@@ -10,7 +10,7 @@ import com.milkcow.tripai.plan.dto.restaurant.RestaurantSearchResponseDto;
 import com.milkcow.tripai.plan.embedded.PriceRange;
 import com.milkcow.tripai.plan.embedded.PlaceHour;
 import com.milkcow.tripai.plan.exception.PlanException;
-import com.milkcow.tripai.plan.result.PlanGetResult;
+import com.milkcow.tripai.plan.result.PlanSearchResult;
 import com.milkcow.tripai.plan.util.DateUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                     typeaheadRequestEntity,
                     String.class);
             if (typeaheadResponse.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanGetResult.RESTAURANT_DESTINATION_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.RESTAURANT_DESTINATION_API_REQUEST_FAILED);
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -74,7 +74,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                     restaurantRequestEntity,
                     String.class);
             if (restaurantResponse.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanGetResult.RESTAURANT_SEARCH_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.RESTAURANT_SEARCH_API_REQUEST_FAILED);
             }
             JsonNode restaurantJson = objectMapper.readTree(restaurantResponse.getBody());
             JsonNode restaurantList = restaurantJson.path("results").path("data");
@@ -92,7 +92,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         } catch (HttpClientErrorException e) {
-            throw new PlanException(PlanGetResult.RESTAURANT_API_KEY_LIMIT_EXCESS);
+            throw new PlanException(PlanSearchResult.RESTAURANT_API_KEY_LIMIT_EXCESS);
         }
     }
 

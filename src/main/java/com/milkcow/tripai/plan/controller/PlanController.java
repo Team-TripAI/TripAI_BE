@@ -6,7 +6,7 @@ import com.milkcow.tripai.plan.dto.attraction.AttractionSearchResponseDto;
 import com.milkcow.tripai.plan.dto.flight.FlightSearchResponseDto;
 import com.milkcow.tripai.plan.dto.restaurant.RestaurantSearchResponseDto;
 import com.milkcow.tripai.plan.exception.PlanException;
-import com.milkcow.tripai.plan.result.PlanGetResult;
+import com.milkcow.tripai.plan.result.PlanSearchResult;
 import com.milkcow.tripai.plan.service.accommodation.AccommodationService;
 import com.milkcow.tripai.plan.service.attraction.AttractionService;
 import com.milkcow.tripai.plan.service.flight.FlightService;
@@ -70,11 +70,11 @@ public class PlanController {
                                                                @RequestParam String departure,
                                                                @RequestParam(defaultValue = MAX_INTEGER) int maxFare) {
         if (!DateUtil.isValidDate(departure)) {
-            throw new PlanException(PlanGetResult.INVALID_DATE);
+            throw new PlanException(PlanSearchResult.INVALID_DATE);
         }
         FlightSearchResponseDto flightData = flightService.getFlightData(departureAirport, arrivalAirport, departure,
                 maxFare);
-        return DataResponse.create(flightData, PlanGetResult.OK_FLIGHT_PLAN);
+        return DataResponse.create(flightData, PlanSearchResult.OK_FLIGHT_PLAN);
     }
 
     /**
@@ -106,11 +106,11 @@ public class PlanController {
                                                                              @RequestParam String endDate,
                                                                              @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
         if (!DateUtil.isValidDate(startDate) || !DateUtil.isValidDate(endDate)) {
-            throw new PlanException(PlanGetResult.INVALID_DATE);
+            throw new PlanException(PlanSearchResult.INVALID_DATE);
         }
         AccommodationSearchResponseDto accommodationData = accommodationService.getAccommodationData(destination, startDate,
                 endDate, maxPrice);
-        return DataResponse.create(accommodationData, PlanGetResult.OK_ACCOMMODATION_PLAN);
+        return DataResponse.create(accommodationData, PlanSearchResult.OK_ACCOMMODATION_PLAN);
     }
 
 
@@ -144,15 +144,15 @@ public class PlanController {
                                                                        @RequestParam String endDate,
                                                                        @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
         if (!DateUtil.isValidDate(startDate) || !DateUtil.isValidDate(endDate)) {
-            throw new PlanException(PlanGetResult.INVALID_DATE);
+            throw new PlanException(PlanSearchResult.INVALID_DATE);
         }
 
         if (validateRestaurantDestination(destination)) {
-            throw new PlanException(PlanGetResult.INVALID_RESTAURANT_DESTINATION);
+            throw new PlanException(PlanSearchResult.INVALID_RESTAURANT_DESTINATION);
         }
         RestaurantSearchResponseDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
                 maxPrice);
-        return DataResponse.create(restaurantData, PlanGetResult.OK_RESTAURANT_PLAN);
+        return DataResponse.create(restaurantData, PlanSearchResult.OK_RESTAURANT_PLAN);
     }
 
     /**
@@ -178,10 +178,10 @@ public class PlanController {
     public DataResponse<AttractionSearchResponseDto> getAttractionPlan(@RequestParam String destination,
                                                                        @RequestParam(defaultValue = MAX_INTEGER) int maxPrice) {
         if (validateRestaurantDestination(destination)) {
-            throw new PlanException(PlanGetResult.INVALID_RESTAURANT_DESTINATION);
+            throw new PlanException(PlanSearchResult.INVALID_RESTAURANT_DESTINATION);
         }
         AttractionSearchResponseDto attractionData = attractionService.getAttractionData(destination, maxPrice);
-        return DataResponse.create(attractionData, PlanGetResult.OK_ATTRACTION_PLAN);
+        return DataResponse.create(attractionData, PlanSearchResult.OK_ATTRACTION_PLAN);
     }
 
     private static boolean validateRestaurantDestination(String destination) {
