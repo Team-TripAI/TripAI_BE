@@ -15,7 +15,7 @@ import com.milkcow.tripai.member.domain.Member;
 import com.milkcow.tripai.member.exception.MemberException;
 import com.milkcow.tripai.member.repository.MemberRepository;
 import com.milkcow.tripai.member.result.MemberResult;
-import com.milkcow.tripai.security.MemberAdapter;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Arrays;
@@ -28,7 +28,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -37,7 +36,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 @Getter
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 public class JwtService {
 
     /**
@@ -66,18 +65,16 @@ public class JwtService {
     /**
      * AccessToken 생성 메소드
      */
-    public String createAccessToken(Authentication authentication) {
-
-        MemberAdapter memberAdapter = (MemberAdapter) authentication.getPrincipal();
+    public String createAccessToken(String email, Long id) {
 
         long now = (new Date()).getTime();
         Date valid = new Date(now + accessTokenProvider.tokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(email)
                 .claim(AUTHORITIES_KEY, ROLE_USER)
-                .claim("user_id", memberAdapter.getMember().getId())
-                .claim("user_email", memberAdapter.getUsername())
+                .claim("user_id", id)
+                .claim("user_email", email)
                 .signWith(accessTokenProvider.key, SignatureAlgorithm.HS512)
                 .setExpiration(valid)
                 .compact();
@@ -86,12 +83,12 @@ public class JwtService {
     /**
      * RefreshToken 생성
      */
-    public String createRefreshToken(Authentication authentication) {
+    public String createRefreshToken(String email) {
         long now = (new Date()).getTime();
         Date validity = new Date(now + refreshTokenProvider.tokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(email)
                 .signWith(refreshTokenProvider.key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
@@ -208,30 +205,40 @@ public class JwtService {
         response.addCookie(refreshCookie);
     }
 
+    public static boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
 
-    public void refresh(HttpServletResponse response, Authentication authentication, String refreshToken) {
+    public static Date getExpirationDateFromToken(String token) {
+        final Claims claims = AccessTokenProvider.getClaims(token);
+        return claims.getExpiration();
+    }
+
+
+    public void reissue(HttpServletResponse response, String email, Long id, String refreshToken) {
 
         // === Refresh Token 유효성 검사 === //
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET)).build();
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC512(SECRET)).build();
         DecodedJWT decodedJWT = verifier.verify(refreshToken);
 
         // === Access Token 재발급 === //
         long now = System.currentTimeMillis();
-        String email = decodedJWT.getSubject();
-        Member member = memberRepository.findByEmail(email)
+        String subject = decodedJWT.getSubject();
+        Member member = memberRepository.findByEmail(subject)
                 .orElseThrow(() -> new MemberException(MemberResult.NOT_FOUND_MEMBER));
         if (!member.getRefreshToken().equals(refreshToken)) {
             throw new JwtException(JwtResult.INVALID_REFRESH_TOKEN);
         }
-        String accessToken = createAccessToken(authentication);
+        String accessToken = createAccessToken(email, id);
 
         // === 현재시간과 Refresh Token 만료날짜를 통해 남은 만료기간 계산 === //
         // === Refresh Token 만료시간 계산해 5분 미만일 시 refresh token도 발급 === //
         long refreshExpireTime = decodedJWT.getClaim("exp").asLong() * 1000;
         long diffMin = (refreshExpireTime - now) / 1000 / 60;
         if (diffMin < 5) {
-            String newRefreshToken = createRefreshToken(authentication);
-            updateRefreshToken(email, newRefreshToken);
+            String newRefreshToken = createRefreshToken(email);
+            updateRefreshToken(subject, newRefreshToken);
             sendAccessAndRefreshToken(response, accessToken, newRefreshToken);
 
         }

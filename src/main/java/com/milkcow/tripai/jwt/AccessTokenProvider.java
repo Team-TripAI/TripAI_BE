@@ -70,7 +70,7 @@ public class AccessTokenProvider {
         return false;
     }
 
-    private static Claims getClaims(String token) {
+    public static Claims getClaims(String token) {
         Claims claims = Jwts
                 .parserBuilder()
                 .setSigningKey(key)

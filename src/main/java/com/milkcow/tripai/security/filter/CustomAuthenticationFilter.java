@@ -29,7 +29,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     private final JwtService jwtService;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
+
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService
+    ) {
         super(authenticationManager);
         this.jwtService = jwtService;
     }
@@ -88,14 +90,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                             Authentication authentication) throws IOException, ServletException {
 
         MemberAdapter memberAdapter = (MemberAdapter) authentication.getPrincipal();
+        String email = memberAdapter.getUsername();
+        Long id = memberAdapter.getMember().getId();
 
         // 1. JWT토큰 생성
-        String accessToken = jwtService.createAccessToken(authentication);
-        String refreshToken = jwtService.createRefreshToken(authentication);
+        String accessToken = jwtService.createAccessToken(email, id);
+        String refreshToken = jwtService.createRefreshToken(email);
 
-        jwtService.updateRefreshToken(memberAdapter.getMember().getEmail(), refreshToken);
+        jwtService.updateRefreshToken(email, refreshToken);
 
-        // 2. header에 JWT토큰을 넣어서 응답
+        // 2. header에 accessToken, cookie에 refreshToken을 넣어 응답
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 
 
