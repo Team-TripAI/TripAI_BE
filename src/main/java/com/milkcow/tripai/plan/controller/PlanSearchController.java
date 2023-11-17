@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 예산기반 여행지 추천 controller
  */
-@Api(tags = "PlanController", description = "예산기반 조회 API")
+@Api(tags = "PlanSearchController", description = "예산기반 조회 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/plan/budget")
@@ -108,7 +108,8 @@ public class PlanSearchController {
         if (!DateUtil.isValidDate(startDate) || !DateUtil.isValidDate(endDate)) {
             throw new PlanException(PlanSearchResult.INVALID_DATE);
         }
-        AccommodationSearchResponseDto accommodationData = accommodationService.getAccommodationData(destination, startDate,
+        AccommodationSearchResponseDto accommodationData = accommodationService.getAccommodationData(destination,
+                startDate,
                 endDate, maxPrice);
         return DataResponse.create(accommodationData, PlanSearchResult.OK_ACCOMMODATION_PLAN);
     }
@@ -150,7 +151,8 @@ public class PlanSearchController {
         if (validateRestaurantDestination(destination)) {
             throw new PlanException(PlanSearchResult.INVALID_RESTAURANT_DESTINATION);
         }
-        RestaurantSearchResponseDto restaurantData = restaurantService.getRestaurantData(destination, startDate, endDate,
+        RestaurantSearchResponseDto restaurantData = restaurantService.getRestaurantData(destination, startDate,
+                endDate,
                 maxPrice);
         return DataResponse.create(restaurantData, PlanSearchResult.OK_RESTAURANT_PLAN);
     }
