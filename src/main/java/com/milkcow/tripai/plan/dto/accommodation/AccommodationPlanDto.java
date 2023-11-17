@@ -6,6 +6,7 @@ import com.milkcow.tripai.plan.domain.AccommodationPlan;
 import com.milkcow.tripai.plan.domain.Plan;
 import com.milkcow.tripai.plan.dto.CommonPlanDto;
 import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccommodationPlanDto extends CommonPlanDto {
     private String image;
+    @NotNull
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
+    @NotNull
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 

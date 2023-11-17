@@ -221,7 +221,6 @@ public class ArticleServiceTest {
 
     private Member getMember(Long id) {
         return Member.builder()
-                .id(id)
                 .email("abcdef@gmail.com")
                 .nickname("닉네임")
                 .build();
