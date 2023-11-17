@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CommonPlanDto {
+public abstract class CommonPlanDto {
     private String name;
     private double lat;
     private double lng;

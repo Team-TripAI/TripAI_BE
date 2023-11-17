@@ -23,8 +23,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FlightPlan{
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class FlightPlan {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -47,9 +48,4 @@ public class FlightPlan{
     @NotNull
     @Column(length = 350)
     private String url;
-
-    public FlightPlan setPlan(Plan plan) {
-        this.plan = plan;
-        return this;
-    }
 }

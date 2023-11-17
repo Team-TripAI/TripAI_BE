@@ -21,8 +21,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class AttractionPlan extends CommonDetailPlan{
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AttractionPlan extends CommonDetailPlan {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -33,16 +34,13 @@ public class AttractionPlan extends CommonDetailPlan{
     @Column(length = 350)
     private String image;
 
-    public AttractionPlan setPlan(Plan plan) {
-        this.plan = plan;
-        return this;
-    }
 
     @Builder
     public AttractionPlan(@NotNull String name, double lat, double lng, List<PlaceHour> hours,
-                          String image) {
+                          String image, Plan plan) {
         super(name, lat, lng);
         this.hours = hours;
         this.image = image;
+        this.plan = plan;
     }
 }

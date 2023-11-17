@@ -32,17 +32,13 @@ public class AccommodationPlan extends CommonDetailPlan{
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    public AccommodationPlan setPlan(Plan plan) {
-        this.plan = plan;
-        return this;
-    }
-
     @Builder
     public AccommodationPlan(@NotNull String name, double lat, double lng, String image,
-                             LocalDate startDate, LocalDate endDate) {
+                             LocalDate startDate, LocalDate endDate, Plan plan) {
         super(name, lat, lng);
         this.image = image;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.plan = plan;
     }
 }
