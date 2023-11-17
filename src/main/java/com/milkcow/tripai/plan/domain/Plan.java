@@ -106,7 +106,7 @@ public class Plan {
     }
 
     private static Plan defaultPlanBuild(PlanRequestDto request, Member member) {
-        Plan plan = Plan.builder()
+        return Plan.builder()
                 .member(member)
                 .startDate(request.getStart())
                 .endDate(request.getEnd())
@@ -118,6 +118,5 @@ public class Plan {
                 .restaurantBudget(request.getRestaurant())
                 .attractionBudget(request.getAttraction())
                 .build();
-        return plan;
     }
 }
