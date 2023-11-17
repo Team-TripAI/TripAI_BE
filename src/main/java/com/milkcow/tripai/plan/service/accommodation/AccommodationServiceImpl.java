@@ -8,7 +8,7 @@ import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.plan.dto.accommodation.AccommodationSearchData;
 import com.milkcow.tripai.plan.dto.accommodation.AccommodationSearchResponseDto;
 import com.milkcow.tripai.plan.exception.PlanException;
-import com.milkcow.tripai.plan.result.PlanGetResult;
+import com.milkcow.tripai.plan.result.PlanSearchResult;
 import com.milkcow.tripai.plan.util.DateUtil;
 import java.util.ArrayList;
 import net.minidev.json.JSONObject;
@@ -54,7 +54,7 @@ public class AccommodationServiceImpl implements AccommodationService {
                     requestEntity,
                     String.class);
             if (destinationResponse.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanGetResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -66,11 +66,11 @@ public class AccommodationServiceImpl implements AccommodationService {
             ResponseEntity<String> hotelResponse = restTemplate.exchange(hotelURL, HttpMethod.GET, requestEntity,
                     String.class);
             if (destinationResponse.getStatusCode() != HttpStatus.OK) {
-                throw new PlanException(PlanGetResult.ACCOMMODATION_SEARCH_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.ACCOMMODATION_SEARCH_API_REQUEST_FAILED);
             }
             JsonNode accommodationJson = objectMapper.readTree(hotelResponse.getBody());
             if (!accommodationJson.get("status").asBoolean()) {
-                throw new PlanException(PlanGetResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
+                throw new PlanException(PlanSearchResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
             }
             JsonNode accommodationList = accommodationJson.path("data").path("hotels");
 
@@ -87,7 +87,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         } catch (JsonProcessingException e) {
             throw new GeneralException(ApiResult.INTERNAL_SERVER_ERROR);
         } catch (HttpClientErrorException e) {
-            throw new PlanException(PlanGetResult.ACCOMMODATION_API_KEY_LIMIT_EXCESS);
+            throw new PlanException(PlanSearchResult.ACCOMMODATION_API_KEY_LIMIT_EXCESS);
         }
     }
 

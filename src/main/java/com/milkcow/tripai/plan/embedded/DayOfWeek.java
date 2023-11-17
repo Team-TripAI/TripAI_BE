@@ -46,6 +46,14 @@ public enum DayOfWeek {
         }
     }
 
+    public int getDayNum() {
+        return dayNum;
+    }
+
+    public String getDayName() {
+        return dayName;
+    }
+
     @Override
     public String toString() {
         return dayName + '\'';
