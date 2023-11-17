@@ -31,14 +31,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        logger.info("authenticate");
 
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         // 'AuthenticaionFilter' 에서 생성된 토큰으로부터 아이디와 비밀번호를 조회함
         String userEmail = token.getName();
         String userPw = (String) token.getCredentials();
-        logger.info(userPw + " " + userEmail + " ");
 
         // Spring Security - UserDetailsService를 통해 DB에서 아이디로 사용자 조회
         CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(userEmail);

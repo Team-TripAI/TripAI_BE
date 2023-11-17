@@ -29,13 +29,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     private final JwtService jwtService;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
+
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService
+    ) {
         super(authenticationManager);
         this.jwtService = jwtService;
     }
 
     /**
-     * 지정된 URL로 form 전송을 하였을 경우 파라미터 정보를 가져온다.
+     * 파라미터 정보를 가져온다.
      *
      * @param request  from which to extract parameters and perform the authentication
      * @param response the response, which may be needed if the implementation has to do a redirect as part of a
@@ -47,8 +49,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         UsernamePasswordAuthenticationToken authRequest;
-        logger.info("인증");
-        logger.info("1. attemptAuthentication");
         try {
             authRequest = getAuthRequest(request);
             setDetails(request, authRequest);
@@ -65,7 +65,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
      *
      * @param request HttpServletRequest
      * @return UsernamePasswordAuthenticationToken
-     * @throws Exception e
+     * @throws MemberException
+     * @throws JwtException
      */
     private UsernamePasswordAuthenticationToken getAuthRequest(HttpServletRequest request) throws Exception {
         try {
@@ -73,9 +74,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
             MemberSignupRequestDto requestDto = objectMapper.readValue(request.getInputStream(),
                     MemberSignupRequestDto.class);
-
-            logger.info("getAuthRequest :: userId:" + requestDto.getEmail() + " userPw:"
-                    + requestDto.getPw());
 
             // ID와 패스워드를 기반으로 토큰 발급
             return new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPw());
@@ -91,16 +89,17 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authentication) throws IOException, ServletException {
 
-        logger.info("successfulAuthentication");
         MemberAdapter memberAdapter = (MemberAdapter) authentication.getPrincipal();
+        String email = memberAdapter.getUsername();
+        Long id = memberAdapter.getMember().getId();
 
         // 1. JWT토큰 생성
-        String accessToken = jwtService.createAccessToken(authentication);
-        String refreshToken = jwtService.createRefreshToken(authentication);
+        String accessToken = jwtService.createAccessToken(email, id);
+        String refreshToken = jwtService.createRefreshToken(email);
 
-        jwtService.updateRefreshToken(memberAdapter.getMember().getEmail(), refreshToken);
+        jwtService.updateRefreshToken(email, refreshToken);
 
-        // 2. header에 JWT토큰을 넣어서 응답
+        // 2. header에 accessToken, cookie에 refreshToken을 넣어 응답
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 
 

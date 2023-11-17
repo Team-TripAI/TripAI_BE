@@ -61,7 +61,6 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.debug("SecurityConfig Start !!! ");
 
         http
                 .csrf().disable()
@@ -72,6 +71,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/login/**").permitAll()
+                .antMatchers("/reissue").permitAll()
                 .antMatchers("/v2/api-docs", "/swagger-resources", "/swagger-resources/**",
                         "/configuration/ui", "/configuration/security", "/swagger-ui.html", "/webjars/**",
                         "/v3/api-docs/**", "/swagger-ui/**").permitAll()
@@ -94,7 +94,7 @@ public class SecurityConfig {
 
 
     /**
-     * 3. authenticate 의 인증 메서드를 제공하는 매니져로'Provider'의 인터페이스를 의미합니다. - 과정: CustomAuthenticationFilter →
+     * 3. authenticate 의 인증 메서드를 제공하는 매니져로'Provider'의 인터페이스를 의미한. - 과정: CustomAuthenticationFilter →
      * AuthenticationManager(interface) → CustomAuthenticationProvider(implements)
      *
      * @return AuthenticationManager
@@ -105,7 +105,7 @@ public class SecurityConfig {
     }
 
     /**
-     * 4. '인증' 제공자로 사용자의 이름과 비밀번호가 요구됩니다. - 과정: CustomAuthenticationFilter → AuthenticationManager(interface) →
+     * 4. '인증' 제공자로 사용자의 이름과 비밀번호가 요구된다. - 과정: CustomAuthenticationFilter → AuthenticationManager(interface) →
      * CustomAuthenticationProvider(implements)
      *
      * @return CustomAuthenticationProvider
@@ -116,7 +116,7 @@ public class SecurityConfig {
     }
 
     /**
-     * 5. 비밀번호를 암호화하기 위한 BCrypt 인코딩을 통하여 비밀번호에 대한 암호화를 수행합니다.
+     * 5. 비밀번호를 암호화하기 위한 BCrypt 인코딩을 통하여 비밀번호에 대한 암호화를 수행한다.
      *
      * @return BCryptPasswordEncoder
      */
@@ -126,7 +126,7 @@ public class SecurityConfig {
 
 
     /**
-     * 6. 커스텀한 '인증' 필터로 접근 URL, 데이터 전달방식(form) 등 인증 과정 및 인증 후 처리에 대한 설정을 구성하는 메서드입니다.
+     * 6. 커스텀한 '인증' 필터로 접근 URL, 데이터 전달방식(form) 등 인증 과정 및 인증 후 처리에 대한 설정을 구성하는 메서드.
      *
      * @return CustomAuthenticationFilter
      */

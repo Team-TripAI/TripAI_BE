@@ -14,19 +14,17 @@ import com.milkcow.tripai.member.exception.OAuth2Exception;
 import com.milkcow.tripai.member.repository.MemberRepository;
 import com.milkcow.tripai.member.result.OAuth2Result;
 import com.milkcow.tripai.security.MemberAdapter;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -68,9 +66,10 @@ public class OAuth2Service {
     }
 
     private void sendAccessAndRefreshToken(HttpServletResponse response, MemberAdapter memberAdapter) {
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberAdapter, "");
-        String accessToken = jwtService.createAccessToken(authentication);
-        String refreshToken = jwtService.createRefreshToken(authentication);
+
+        String accessToken = jwtService.createAccessToken(memberAdapter.getUsername(),
+                memberAdapter.getMember().getId());
+        String refreshToken = jwtService.createRefreshToken(memberAdapter.getUsername());
 
         jwtService.updateRefreshToken(memberAdapter.getMember().getEmail(), refreshToken);
 
