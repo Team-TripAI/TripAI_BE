@@ -17,7 +17,7 @@ public class Image {
     private Long id;
 
     @Column(nullable = false)
-    private String image;
+    private String uuid;
 
     @Column(nullable = false)
     private Double lat;

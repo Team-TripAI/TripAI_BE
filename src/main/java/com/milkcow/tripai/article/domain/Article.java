@@ -58,7 +58,7 @@ public class Article {
                 .content(request.getContent())
                 .locationName(request.getLocationName())
                 .formattedAddress(request.getFormattedAddress())
-                .image(request.getImage())
+                .image(request.getImageUuid())
                 .member(member)
                 .build();
     }
