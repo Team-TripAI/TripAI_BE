@@ -179,7 +179,7 @@ public class ArticleServiceTest {
                 .content("내용")
                 .formattedAddress("주소")
                 .locationName("장소명")
-                .imageUuid("36b8f84d-df4e-4d49-b662-bcde71a8764f")
+                .image("36b8f84d-df4e-4d49-b662-bcde71a8764f")
                 .lat(38.2252707)
                 .lng(128.5883593)
                 .labelList(labelList)

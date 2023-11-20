@@ -46,7 +46,7 @@ public class ArticleCreateRequest {
     @NotNull
     @ApiParam(value = "여행사진")
     @ApiModelProperty(example = "해초1699197018587.png")
-    private final String imageUuid;
+    private final String image;
 
     @NotNull
     @ApiParam(value = "여행장소 위도")
@@ -79,7 +79,7 @@ public class ArticleCreateRequest {
         assert colorList != null;
 
         return Image.builder()
-                .uuid(imageUuid)
+                .uuid(image)
                 .lat(lat)
                 .lng(lng)
                 .locationName(locationName)
