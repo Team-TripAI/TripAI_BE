@@ -6,6 +6,7 @@ import com.milkcow.tripai.plan.dto.CommonPlanDto;
 import com.milkcow.tripai.plan.embedded.PlaceHour;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AttractionPlanDto extends CommonPlanDto {
+    @Size(max = 7)
     private List<PlaceHour> hours;
     private String image;
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.milkcow.tripai.plan.domain.FlightPlan;
 import com.milkcow.tripai.plan.domain.Plan;
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class FlightPlanDto {
+    @NotNull
     private String name;
+    @NotNull
     private String airline;
+    @NotNull
     private String departureAirport;
+    @NotNull
     private String arrivalAirport;
+    @NotNull
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startTime;
+    @NotNull
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
     private String url;

@@ -79,7 +79,7 @@ public class ArticleCreateRequest {
         assert colorList != null;
 
         return Image.builder()
-                .image(image)
+                .uuid(image)
                 .lat(lat)
                 .lng(lng)
                 .locationName(locationName)

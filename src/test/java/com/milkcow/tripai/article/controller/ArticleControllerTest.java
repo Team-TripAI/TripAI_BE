@@ -154,7 +154,7 @@ public class ArticleControllerTest {
         final String url = "/article";
         final PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createDate").descending());
 
-        final Member member = Member.builder().id(1L).nickname("닉네임").build();
+        final Member member = Member.builder().nickname("닉네임").build();
         Page<Article> pages = new PageImpl<>(Arrays.asList(
                 Article.builder().member(member).build(),
                 Article.builder().member(member).build(),

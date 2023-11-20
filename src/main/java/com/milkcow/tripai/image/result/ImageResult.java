@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ImageResult implements ResultProvider {
 
+    INVALID_COLOR_PATTERN(400, HttpStatus.BAD_REQUEST, "유효하지 않은 색상값"),
     IMAGE_NOT_FOUND(404, HttpStatus.NOT_FOUND, "이미지 찾을 수 없음"),
     ;
 
