@@ -12,7 +12,8 @@ public class ImageRequestDto {
     private List<String> labelList;
     private List<String> colorList;
 
-    public List<Color> getColorList(){
+
+    public List<Color> stringToColor(){
         return colorList.stream().map(Color::stringToColor).collect(Collectors.toList());
     }
 }
