@@ -5,6 +5,7 @@ import com.milkcow.tripai.image.domain.Image;
 import com.milkcow.tripai.image.dto.ImageRequestDto;
 import com.milkcow.tripai.image.dto.ImageResponseData;
 import com.milkcow.tripai.image.dto.ImageResponseDto;
+import com.milkcow.tripai.image.embedded.Color;
 import com.milkcow.tripai.image.repository.ImageRepositoryCustom;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +20,11 @@ public class ImageService {
     public DataResponse<ImageResponseDto> searchSimilarPlace(ImageRequestDto requestDto) {
         //TODO 임시 코드입니다. 리포지토리에서 받은 임의의 값을 그대로 사용합니다.
         // 추천 알고리즘 작성해주세요~
-        List<Image> labelMatchedList = imageRepository.searchSimilar(requestDto.getLabelList(),
-                requestDto.stringToColor());
-        
+        List<String> requestLabelList = requestDto.getLabelList();
+        List<Color> requestColorList = requestDto.stringToColor();
+
+        List<Image> labelMatchedList = imageRepository.searchLabelMatch(requestLabelList);
+
         List<ImageResponseData> recommendList = labelMatchedList.stream().map(ImageResponseData::toDto)
                 .collect(Collectors.toList());
 

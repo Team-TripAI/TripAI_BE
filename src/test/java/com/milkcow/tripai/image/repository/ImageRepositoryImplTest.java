@@ -40,8 +40,7 @@ class ImageRepositoryImplTest {
                 .colorList(List.of("123456", "123456", "123456", "123456", "123456"))
                 .build();
         //when
-        List<Image> images = imageRepository.searchSimilar(requestDto.getLabelList(),
-                requestDto.stringToColor());
+        List<Image> images = imageRepository.searchLabelMatch(requestDto.getLabelList());
         //then
         Assertions.assertThat(images.isEmpty()).isTrue();
     }
@@ -102,8 +101,7 @@ class ImageRepositoryImplTest {
 
     private void labelSearchTest(ImageRequestDto requestDto, int expected) {
         //when
-        List<Image> images = imageRepository.searchSimilar(requestDto.getLabelList(),
-                requestDto.stringToColor());
+        List<Image> images = imageRepository.searchLabelMatch(requestDto.getLabelList());
         //then
         Assertions.assertThat(images.size()).isEqualTo(expected);
     }

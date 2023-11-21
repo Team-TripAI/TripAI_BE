@@ -12,7 +12,7 @@ public class ImageRepositoryCustomImpl implements ImageRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Image> searchSimilar(List<String> labelList, List<Color> colorList) {
+    public List<Image> searchLabelMatch(List<String> labelList) {
         QImage image = QImage.image;
 
         return queryFactory

@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ImageRepositoryCustom {
-    List<Image> searchSimilar(List<String> labelList, List<Color> colorList);
+    List<Image> searchLabelMatch(List<String> labelList);
 }
