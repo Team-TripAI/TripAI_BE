@@ -13,11 +13,19 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * 이미지 기반 추천 서비스
+ */
 @Service
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageRepositoryCustom imageRepository;
 
+    /**
+     * 이미지 기반 유사 장소 추천
+     * @param requestDto {@link ImageRequestDto}
+     * @return {@link ImageResponseData}
+     */
     public DataResponse<ImageResponseDto> searchSimilarPlace(ImageRequestDto requestDto) {
         List<String> requestLabelList = requestDto.getLabelList();
         List<Color> requestColorList = requestDto.stringToColor();
@@ -36,6 +44,13 @@ public class ImageService {
         return DataResponse.create(responseDto);
     }
 
+    /**
+     * 사용자 요청 라벨, 색상과 image별 유사도 점수 내림차순 정렬
+     * @param requestLabelList 사용자 요청 라벨 리스트
+     * @param requestColorList 사용자 요청 색상 리스트
+     * @param labelMatchedList 사용자 요청 라벨리스트 중 하나이상 일치하는 image 리스트
+     * @return {@link ImageResponseData}
+     */
     private List<ImageResponseData> calculateSimilarImage(List<String> requestLabelList,
                                                           List<Color> requestColorList,
                                                           List<Image> labelMatchedList) {
