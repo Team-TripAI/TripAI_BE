@@ -72,7 +72,6 @@ public class SecurityConfig {
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/reissue").permitAll()
-                .antMatchers("/hello").permitAll()
                 .antMatchers("/v2/api-docs", "/swagger-resources", "/swagger-resources/**",
                         "/configuration/ui", "/configuration/security", "/swagger-ui.html", "/webjars/**",
                         "/v3/api-docs/**", "/swagger-ui/**").permitAll()

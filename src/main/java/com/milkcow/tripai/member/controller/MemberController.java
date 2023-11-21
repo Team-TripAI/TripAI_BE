@@ -26,7 +26,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,10 +41,6 @@ public class MemberController {
 
     private final JwtService jwtService;
 
-    @GetMapping("/hello")
-    public String init() {
-        return "Server Started!!";
-    }
 
     /**
      * Email을 통한 회원가입
