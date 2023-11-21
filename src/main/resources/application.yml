@@ -1,0 +1,41 @@
+spring:
+  h2:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/tripai
+    username: sa
+    password:
+
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+
+jwt:
+  header: Authorization
+  secret: dHJpcGFpLXRlY2gtc3ByaW5nLWJvb3Qtand0LXR1dG9yaWFsLXNlY3JldC10cmlwYWktdGVjaC1zcHJpbmctYm9vdC1qd3QtdHV0b3JpYWwtc2VjcmV0
+  refresh-token-secret: d29ybGQgbXkgbmFtZSBpcyBzc29uZyBoYWhhaGFoYWhhaGFoYSBydXJ1cnVydXJ1cnVydXJ1ZHNmc2Rmc2Rmc2Rmc2FkCg==
+  access-token-validity-in-seconds: 3600 # 60 min
+  refresh-token-validity-in-seconds: 86400
+
+API-keys:
+  TripAdvisor:
+    API-Key: 74c8c2a6f8msh73ae3af6fb759e1p1583d1jsna2a1604ed9e8
+    API-Host: tripadvisor16.p.rapidapi.com
+    SearchFlights-URL: https://tripadvisor16.p.rapidapi.com/api/v1/flights/searchFlights
+  Restaurants:
+    API-Key: 8232d37af9mshbab18624a9b281ep13cb24jsn6c5477f7c3be
+    API-Host: restaurants222.p.rapidapi.com
+    Typeahead-URL: https://restaurants222.p.rapidapi.com/typeahead
+    Search-URL: https://restaurants222.p.rapidapi.com/search
+  Booking:
+    API-Key: 74c8c2a6f8msh73ae3af6fb759e1p1583d1jsna2a1604ed9e8
+    API-Host: booking-com15.p.rapidapi.com
+    SearchHotelDestination-URL: https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination
+    SearchHotels-URL: https://booking-com15.p.rapidapi.com/api/v1/hotels/searchHotels
+  Tourist-Attraction:
+    API-Key: 8232d37af9mshbab18624a9b281ep13cb24jsn6c5477f7c3be
+    API-Host: tourist-attraction.p.rapidapi.com
+    Typeahead-URL: https://tourist-attraction.p.rapidapi.com/typeahead
+    Search-URL: https://tourist-attraction.p.rapidapi.com/search
