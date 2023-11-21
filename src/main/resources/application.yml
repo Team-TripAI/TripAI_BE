@@ -1,16 +1,39 @@
+#spring:
+#  h2:
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:tcp://localhost/~/tripai
+#    username: sa
+#    password:
+#
+#
+#  jpa:
+#    show-sql: true
+#    generate-ddl: true
+#    hibernate:
+#      ddl-auto: create-drop
+
+
 spring:
-  h2:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:tcp://localhost/~/tripai
-    username: sa
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-tripai.cis7ml2gnvdm.ap-northeast-2.rds.amazonaws.com:3306/tripai?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: admin
+    password: swimming005
+
 
   jpa:
-    show-sql: true
-    generate-ddl: true
+    open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: false
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
 
 jwt:
   header: Authorization
@@ -18,7 +41,6 @@ jwt:
   refresh-token-secret: d29ybGQgbXkgbmFtZSBpcyBzc29uZyBoYWhhaGFoYWhhaGFoYSBydXJ1cnVydXJ1cnVydXJ1ZHNmc2Rmc2Rmc2Rmc2FkCg==
   access-token-validity-in-seconds: 3600 # 60 min
   refresh-token-validity-in-seconds: 86400
-
 API-keys:
   TripAdvisor:
     API-Key: 74c8c2a6f8msh73ae3af6fb759e1p1583d1jsna2a1604ed9e8
