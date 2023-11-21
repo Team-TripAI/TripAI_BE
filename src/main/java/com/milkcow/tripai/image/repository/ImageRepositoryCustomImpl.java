@@ -2,7 +2,6 @@ package com.milkcow.tripai.image.repository;
 
 import com.milkcow.tripai.image.domain.Image;
 import com.milkcow.tripai.image.domain.QImage;
-import com.milkcow.tripai.image.embedded.Color;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
