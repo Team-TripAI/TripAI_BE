@@ -41,6 +41,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
           script: |
             docker pull wjdghks0706/tripai
             docker stop server
