@@ -56,7 +56,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          key: ${{ secrets.PRIVATE_KEY }} #/.ssh/id_rsa
           script: |
             docker stop ${{ secrets.CONTAINER_NAME }}
             docker rm ${{ secrets.CONTAINER_NAME }}
