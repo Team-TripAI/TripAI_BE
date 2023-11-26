@@ -23,6 +23,7 @@ public class ImageService {
 
     /**
      * 이미지 기반 유사 장소 추천
+     *
      * @param requestDto {@link ImageRequestDto}
      * @return {@link ImageResponseData}
      */
@@ -45,7 +46,7 @@ public class ImageService {
     }
 
     /**
-     * 사용자 요청 라벨, 색상과 image별 유사도 점수 내림차순 정렬
+     * 사용자 요청 라벨, 색상과 image별 유사도 점수 내림차순 정렬, 최대 8개 반환
      * @param requestLabelList 사용자 요청 라벨 리스트
      * @param requestColorList 사용자 요청 색상 리스트
      * @param labelMatchedList 사용자 요청 라벨리스트 중 하나이상 일치하는 image 리스트
@@ -54,11 +55,17 @@ public class ImageService {
     private List<ImageResponseData> calculateSimilarImage(List<String> requestLabelList,
                                                           List<Color> requestColorList,
                                                           List<Image> labelMatchedList) {
-        return labelMatchedList
+        List<ImageResponseData> toatalDataList = labelMatchedList
                 .stream()
                 .map(i -> new ImageScore(requestLabelList, requestColorList, i))
                 .sorted(Comparator.comparing(ImageScore::getScore).reversed())
                 .map(ImageScore::toDto)
                 .collect(Collectors.toList());
+
+        if (toatalDataList.size() >= 8) {
+            return toatalDataList.subList(0, 8);
+        }
+
+        return toatalDataList;
     }
 }

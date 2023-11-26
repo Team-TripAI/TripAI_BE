@@ -6,13 +6,24 @@ import com.milkcow.tripai.image.embedded.Color;
 import java.util.List;
 
 public class ImageScore {
+    private static int MAX_SCORE = 75;
+
     public Image image;
     public double score;
 
+    /**
+     * ImageScore 생성자, score가 MAX_SCORE인 경우 같은 이미지로 판단하고 score를 0으로 초기화
+     * @param requestLabelList 사용자 요청 라벨 리스트
+     * @param requestColorList 사용자 요청 색상 리스트
+     * @param image {@link Image}
+     */
     public ImageScore(List<String> requestLabelList, List<Color> requestColorList, Image image) {
         this.image = image;
         this.score = calculateScore(requestLabelList, requestColorList, image);
-        System.out.println("\tTotal Score: " + score);
+
+        if(this.score == MAX_SCORE){
+            this.score = 0;
+        }
     }
 
     public double getScore() {
