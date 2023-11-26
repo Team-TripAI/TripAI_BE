@@ -4,6 +4,7 @@ import com.milkcow.tripai.article.dto.*;
 import com.milkcow.tripai.article.domain.Article;
 import com.milkcow.tripai.article.exception.ArticleException;
 import com.milkcow.tripai.article.repository.ArticleRepository;
+import com.milkcow.tripai.article.repository.CommentRepository;
 import com.milkcow.tripai.article.result.ArticleResult;
 import com.milkcow.tripai.image.domain.Image;
 import com.milkcow.tripai.image.repository.ImageRepository;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,9 @@ public class ArticleServiceTest {
     private ArticleService target;
     @Mock
     private ArticleRepository articleRepository;
+
+    @Mock
+    private CommentRepository commentRepository;
 
     @Mock
     private ImageRepository imageRepository;
@@ -220,9 +225,13 @@ public class ArticleServiceTest {
     }
 
     private Member getMember(Long id) {
-        return Member.builder()
+        Member member = Member.builder()
                 .email("abcdef@gmail.com")
                 .nickname("닉네임")
                 .build();
+
+        ReflectionTestUtils.setField(member, "id", id);
+
+        return member;
     }
 }
