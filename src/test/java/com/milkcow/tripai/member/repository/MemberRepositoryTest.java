@@ -1,14 +1,17 @@
 package com.milkcow.tripai.member.repository;
 
+import com.milkcow.tripai.global.config.TestQueryDslConfig;
 import com.milkcow.tripai.member.domain.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestQueryDslConfig.class)
 class MemberRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;

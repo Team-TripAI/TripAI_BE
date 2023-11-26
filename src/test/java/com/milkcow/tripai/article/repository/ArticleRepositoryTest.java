@@ -2,11 +2,13 @@ package com.milkcow.tripai.article.repository;
 
 
 import com.milkcow.tripai.article.domain.Article;
+import com.milkcow.tripai.global.config.TestQueryDslConfig;
 import com.milkcow.tripai.member.domain.Member;
 import com.milkcow.tripai.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Import(TestQueryDslConfig.class)
 public class ArticleRepositoryTest {
 
     @Autowired
