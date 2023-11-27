@@ -6,7 +6,7 @@ import com.milkcow.tripai.image.embedded.Color;
 import java.util.List;
 
 public class ImageScore {
-    private static int MAX_SCORE = 75;
+    private static final int MAX_SCORE = 75;
 
     public Image image;
     public double score;
@@ -28,6 +28,10 @@ public class ImageScore {
 
     public double getScore() {
         return score;
+    }
+
+    public Image getImage() {
+        return image;
     }
 
     /**
@@ -61,10 +65,6 @@ public class ImageScore {
             }
         }
 
-        //TODO 디버깅을 위한 코드, 삭제 필요
-        System.out.println("name: " + image.getLocationName());
-        System.out.println("\tlabelCount: " + matchLabelCount);
-        System.out.println("\tColor: " + colorSimilaritySum);
         return (double) matchLabelCount * 10 + colorSimilaritySum;
     }
 
@@ -82,6 +82,6 @@ public class ImageScore {
     }
 
     public ImageResponseData toDto() {
-        return ImageResponseData.toDto(this.image);
+        return ImageResponseData.toDto(this);
     }
 }
