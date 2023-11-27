@@ -4,6 +4,7 @@ import com.milkcow.tripai.plan.domain.Plan;
 import com.milkcow.tripai.plan.domain.RestaurantPlan;
 import com.milkcow.tripai.plan.dto.CommonPlanDto;
 import com.milkcow.tripai.plan.embedded.PlaceHour;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,6 +18,8 @@ import lombok.NoArgsConstructor;
 public class RestaurantPlanDto extends CommonPlanDto {
     @Size(max = 7)
     private List<PlaceHour> hours;
+
+    @ApiModelProperty(value = "맛집 사진", example = "200")
     private String image;
 
     public RestaurantPlanDto(@NotNull String name, double lat, double lng, List<PlaceHour> hours,
