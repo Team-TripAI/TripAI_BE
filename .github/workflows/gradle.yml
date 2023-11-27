@@ -19,12 +19,21 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: yml 생성
         run: touch application.yml  # 비어있는 yml 파일 하나 생성
 
       - name: secrets에 있는 APPLICATION 내용을 yml 파일에 덮어쓰기
         run: echo "${{secrets.PROPERTIES}}" > ./src/main/resources/application.yml   # APPLICATION에 있는 내용 저 경로에 추가
-
 
       - name: yml 파일 다운받을 수 있게 업로드
         uses: actions/upload-artifact@v3.1.2
@@ -39,28 +48,35 @@ jobs:
       - name: 스프링부트 애플리케이션 빌드
         run: ./gradlew clean build -x test
 
-      - name: Docker Hub 로그인
-        uses: docker/login-action@v2
+      # 수정
+      - name: Make zip file
+        run: |
+          mkdir deploy
+          cp ./appspec.yml ./deploy/
+          cp ./Dockerfile ./deploy/
+          cp ./scripts/*.sh ./deploy/
+          cp ./build/libs/*.jar ./deploy/
+          zip -r -qq -j ./spring-build.zip ./deploy
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          username: ${{ secrets.DOCKER_ID }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
 
-      - name: 도커 이미지 빌드
-        run: docker build -t ${{ secrets.DOCKER_HUB_REPO }} .
+      - name: Upload to S3
+        run: |
+          aws s3 cp \
+            --region ap-northeast-2 \
+            ./spring-build.zip s3://tripai-cicd-bucket
 
-      - name: Docker Hub 퍼블리시
-        run: docker push ${{ secrets.DOCKER_HUB_REPO }}
+      # 추가
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name tripai
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name TripAi
+          --s3-location bucket=tripai-cicd-bucket,bundleType=zip,key=spring-build.zip
 
-      - name: WAS 인스턴스 접속 및 애플리케이션 실행
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }} #/.ssh/id_rsa 아닌 pem 키
-          port: ${{ secrets.PORT }}
-          script: |
-            docker stop ${{ secrets.CONTAINER_NAME }}
-            docker rm ${{ secrets.CONTAINER_NAME }}
-            docker image rm $(docker images -q)
-            docker pull ${{ secrets.DOCKER_HUB_REPO }}
-            docker run -d --name ${{ secrets.CONTAINER_NAME }} -p 8080:8080 ${{ secrets.DOCKER_HUB_REPO }}
+
+
