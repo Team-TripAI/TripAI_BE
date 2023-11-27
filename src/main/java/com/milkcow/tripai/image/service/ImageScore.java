@@ -30,6 +30,10 @@ public class ImageScore {
         return score;
     }
 
+    public Image getImage() {
+        return image;
+    }
+
     /**
      * 사용자가 요청안 라벨, 색상과 DB에서 조회된 한개 이상이라도 라벨이 일치하는 이미지와 유사도 측정<p>
      * 점수 측정 방식<p>
@@ -61,10 +65,6 @@ public class ImageScore {
             }
         }
 
-        //TODO 디버깅을 위한 코드, 삭제 필요
-        System.out.println("name: " + image.getLocationName());
-        System.out.println("\tlabelCount: " + matchLabelCount);
-        System.out.println("\tColor: " + colorSimilaritySum);
         return (double) matchLabelCount * 10 + colorSimilaritySum;
     }
 
@@ -82,6 +82,6 @@ public class ImageScore {
     }
 
     public ImageResponseData toDto() {
-        return ImageResponseData.toDto(this.image);
+        return ImageResponseData.toDto(this);
     }
 }
