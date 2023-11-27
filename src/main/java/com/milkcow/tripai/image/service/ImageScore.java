@@ -6,7 +6,7 @@ import com.milkcow.tripai.image.embedded.Color;
 import java.util.List;
 
 public class ImageScore {
-    private static int MAX_SCORE = 75;
+    private static final int MAX_SCORE = 75;
 
     public Image image;
     public double score;
