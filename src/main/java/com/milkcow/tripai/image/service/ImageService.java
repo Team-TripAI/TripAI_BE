@@ -6,7 +6,9 @@ import com.milkcow.tripai.image.dto.ImageRequestDto;
 import com.milkcow.tripai.image.dto.ImageResponseData;
 import com.milkcow.tripai.image.dto.ImageResponseDto;
 import com.milkcow.tripai.image.embedded.Color;
+import com.milkcow.tripai.image.exception.ImageException;
 import com.milkcow.tripai.image.repository.ImageRepositoryCustom;
+import com.milkcow.tripai.image.result.ImageResult;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +44,7 @@ public class ImageService {
                 .recommendCount(recommendCount)
                 .recommendList(recommendList)
                 .build();
-        return DataResponse.create(responseDto);
+        return DataResponse.create(responseDto, ImageResult.OK_IMAGE_BASED_PLACE);
     }
 
     /**
@@ -64,6 +66,10 @@ public class ImageService {
 
         if (toatalDataList.size() >= 8) {
             return toatalDataList.subList(0, 8);
+        }
+
+        if (toatalDataList.isEmpty()){
+            throw new ImageException(ImageResult.IMAGE_NOT_FOUND);
         }
 
         return toatalDataList;
