@@ -5,6 +5,7 @@ import com.milkcow.tripai.article.exception.CommentException;
 import com.milkcow.tripai.global.result.ApiResult;
 import com.milkcow.tripai.global.dto.ErrorResponse;
 import com.milkcow.tripai.global.result.ResultProvider;
+import com.milkcow.tripai.image.exception.ImageException;
 import com.milkcow.tripai.member.exception.MemberException;
 import com.milkcow.tripai.member.exception.OAuth2Exception;
 import com.milkcow.tripai.plan.exception.PlanException;
@@ -59,6 +60,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             JwtException.class,
             ArticleException.class,
             CommentException.class,
+            ImageException.class
     })
     public ResponseEntity<ErrorResponse> handleGeneralException(final ErrorResultAccessor ex) {
 

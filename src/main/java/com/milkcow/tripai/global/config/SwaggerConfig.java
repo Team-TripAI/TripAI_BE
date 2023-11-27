@@ -38,7 +38,8 @@ public class SwaggerConfig {
         // Controller 생성 시에 이곳에 경로 추가
         return RequestHandlerSelectors.basePackage("com.milkcow.tripai.article.controller")
                 .or(RequestHandlerSelectors.basePackage("com.milkcow.tripai.member.controller"))
-                .or(RequestHandlerSelectors.basePackage("com.milkcow.tripai.plan.controller"));
+                .or(RequestHandlerSelectors.basePackage("com.milkcow.tripai.plan.controller"))
+                .or(RequestHandlerSelectors.basePackage("com.milkcow.tripai.image.controller"));
     }
 
     @Bean
