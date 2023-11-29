@@ -15,6 +15,8 @@ public enum MemberResult implements ResultProvider {
 
     OK_WITHDRAW(200, HttpStatus.OK, "회원탈퇴 성공!"),
 
+    OK_FINDMEMBER(200, HttpStatus.OK, "회원 정보 성공"),
+
     ALREADY_EXIST_USER(419, HttpStatus.CONFLICT, "이미 존재하는 회원입니다."),
 
     INVALID_INPUT(420, HttpStatus.EXPECTATION_FAILED, "입력이 잘못되었습니다."),
