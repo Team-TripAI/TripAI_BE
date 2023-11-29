@@ -50,7 +50,7 @@ public class PlanController {
      */
     @ApiOperation(value = "예산 기반 일정 등록", notes = "예산 기반 일정 등록 API")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "PlanRequestDto", value = "등록할 예산기반 일정 정보", readOnly = true, paramType = "body", dataTypeClass = PlanRequestDto.class)
+            @ApiImplicitParam(name = "planDto", value = "등록할 예산기반 일정 정보", readOnly = true, paramType = "body", dataTypeClass = PlanRequestDto.class)
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "일정 등록 성공"),

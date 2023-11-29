@@ -44,8 +44,8 @@ public class MemberController {
     @PostMapping("/signup/email")
     @Transactional
     @ApiOperation(value = "Email을 통한 회원가입", notes = "이메일을 아이디로 사용한 회원가입이다.")
-    @ApiImplicitParam(name = "MemberSignupRequestDto", value = "이메일, 비밀번호, 닉네임",
-            paramType = "body", dataType = "com/milkcow/tripai/member/dto/MemberSignupRequestDto.java")
+    @ApiImplicitParam(name = "requestDto", value = "이메일, 비밀번호, 닉네임",
+            paramType = "body", dataTypeClass = MemberSignupRequestDto.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "회원가입 성공!"),
             @ApiResponse(code = 419, message = "이미 존재하는 회원입니다."),
@@ -73,7 +73,7 @@ public class MemberController {
     @PostMapping("/users")
     @Transactional
     @ApiOperation(value = "회원 정보 수정", notes = "현재는 Nickname만 수정 가능하다.")
-    @ApiImplicitParam(name = "MemberUpdateRequestDto", value = "닉네임, 비밀번호", paramType = "body", dataType = "com/milkcow/tripai/member/dto/MemberUpdateRequestDto.java")
+    @ApiImplicitParam(name = "requestDto", value = "닉네임, 비밀번호", paramType = "body", dataTypeClass = MemberUpdateRequestDto.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "닉네임 수정 성공!"),
             @ApiResponse(code = 500, message = "서버 내 오류")
@@ -112,7 +112,7 @@ public class MemberController {
     @DeleteMapping("/users")
     @Transactional
     @ApiOperation(value = "회원 탈퇴", notes = "회원 탈퇴를 진행한다.")
-    @ApiImplicitParam(name = "withdrawDto", value = "비밀번호", paramType = "body", dataType = "com/milkcow/tripai/member/dto/MemberWithdrawRequestDto.java")
+    @ApiImplicitParam(name = "requestDto", value = "비밀번호", paramType = "body", dataTypeClass = MemberWithdrawRequestDto.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "회원탈퇴 성공!"),
             @ApiResponse(code = 500, message = "서버 내 오류")
