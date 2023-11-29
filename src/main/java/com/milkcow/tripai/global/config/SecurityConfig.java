@@ -23,6 +23,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 
 /**
@@ -65,6 +70,9 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .httpBasic().disable() // httpBasic 사용 X
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and()
@@ -139,5 +147,26 @@ public class SecurityConfig {
         return customAuthenticationFilter;
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
 
+        config.setAllowedOrigins(
+                List.of("http://localhost:8080", "http://localhost:3000")
+        );
+        config.setAllowedMethods(
+                List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS")
+        );
+        config.setAllowedHeaders(
+                List.of("*")
+        );
+        config.setExposedHeaders(
+                List.of("Authorization")
+        );
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }
