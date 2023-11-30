@@ -14,6 +14,4 @@ fi
 
 cd /home/ubuntu/app
 sudo docker build -t wjdghks0706/tripai .
-sudo docker push wjdghks0706/tripai
-sudo docker pull wjdghks0706/tripai
 sudo docker run -d -p 8080:8080 wjdghks0706/tripai
