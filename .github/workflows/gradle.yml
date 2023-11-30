@@ -1,0 +1,82 @@
+name: TripAi CI/CD
+on:
+  push:
+    branches: [ "main" ]        # 메인브랜치에 푸쉬가 되면
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy: # deploy라는 작업을 할것이다
+    runs-on: ubuntu-latest    # 우분투 최신버전으로 진행 한다
+    steps: # 순서대로 실행한다
+
+      - name: 저장소 Checkout
+        uses: actions/checkout@v3   # 레포지토리 한번 체크
+
+      - name: JDK 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: yml 생성
+        run: touch application.yml  # 비어있는 yml 파일 하나 생성
+
+      - name: secrets에 있는 APPLICATION 내용을 yml 파일에 덮어쓰기
+        run: echo "${{secrets.APPLICATION}}" > ./src/main/resources/application.yml   # APPLICATION에 있는 내용 저 경로에 추가
+
+      - name: yml 파일 다운받을 수 있게 업로드
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: application.yml
+          path: ./src/main/resources/
+
+
+      - name: gradlew 실행권한 주기
+        run: chmod +x gradlew
+
+      - name: 스프링부트 애플리케이션 빌드
+        run: ./gradlew clean build -x test
+
+      # 수정
+      - name: Make zip file
+        run: |
+          mkdir deploy
+          cp ./appspec.yml ./deploy/
+          cp ./Dockerfile ./deploy/
+          cp ./scripts/*.sh ./deploy/
+          cp ./build/libs/*.jar ./deploy/
+          zip -r -qq -j ./spring-build.zip ./deploy
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp \
+            --region ap-northeast-2 \
+            ./spring-build.zip s3://tripai-cicd-bucket
+
+      # 추가
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name tripai
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name TripAi
+          --s3-location bucket=tripai-cicd-bucket,bundleType=zip,key=spring-build.zip
+
+
+
