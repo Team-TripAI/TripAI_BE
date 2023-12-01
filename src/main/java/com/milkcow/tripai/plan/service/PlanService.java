@@ -2,6 +2,7 @@ package com.milkcow.tripai.plan.service;
 
 import com.milkcow.tripai.member.domain.Member;
 import com.milkcow.tripai.plan.domain.Plan;
+import com.milkcow.tripai.plan.dto.PlanPageResponseDto;
 import com.milkcow.tripai.plan.dto.PlanRequestDto;
 import com.milkcow.tripai.plan.dto.PlanResponseDto;
 import com.milkcow.tripai.plan.exception.PlanException;
@@ -9,6 +10,8 @@ import com.milkcow.tripai.plan.repository.PlanRepository;
 import com.milkcow.tripai.plan.result.PlanResult;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +73,13 @@ public class PlanService {
             throw new PlanException(PlanResult.PLAN_FORBIDDEN);
         }
         planRepository.deleteById(planId);
+    }
+
+    public PlanPageResponseDto getPage(PageRequest pageRequest, Member member) {
+
+        final Page<Plan> planPage = planRepository.findAllByMember(pageRequest, member);
+
+        return PlanPageResponseDto.toDto(planPage);
     }
 
 }

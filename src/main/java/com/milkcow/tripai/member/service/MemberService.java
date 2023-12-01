@@ -30,7 +30,7 @@ public class MemberService {
 
     public Member emailSignUp(MemberSignupRequestDto requestDto) {
 
-        if (isDuplicated(requestDto.getEmail(), requestDto.getNickname())) {
+        if (isDuplicatedEmail(requestDto.getEmail()) || isDuplicatedNickname(requestDto.getNickname())) {
             throw new MemberException(MemberResult.ALREADY_EXIST_USER);
         }
         Member member = requestDto.toEntity();
@@ -50,6 +50,9 @@ public class MemberService {
 
         if (!member.getPassword().matches(requestDto.getPw())) {
             throw new MemberException(MemberResult.INVALID_PASSWORD);
+        }
+        if (isDuplicatedNickname(String.valueOf(requestDto.getNickname()))) {
+            throw new MemberException(MemberResult.ALREADY_EXIST_USER);
         }
         requestDto.getNickname().ifPresent(member::updateNickname);
     }
@@ -82,12 +85,25 @@ public class MemberService {
      * 이메일 중복검사
      *
      * @param email
+     * @return true : 중복 존재
+     * @return false : 중복 없음
+     */
+    private boolean isDuplicatedEmail(String email) {
+
+        return memberRepository.existsByEmail(email);
+
+    }
+
+    /**
+     * 닉네임 중복검사
+     *
      * @param nickname
      * @return true : 중복 존재
      * @return false : 중복 없음
      */
-    private boolean isDuplicated(String email, String nickname) {
-        return memberRepository.existsByEmailAndNickname(email, nickname);
+    private boolean isDuplicatedNickname(String nickname) {
+
+        return memberRepository.existsByNickname(nickname);
 
     }
 }
