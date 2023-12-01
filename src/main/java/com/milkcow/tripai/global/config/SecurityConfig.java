@@ -8,6 +8,7 @@ import com.milkcow.tripai.member.repository.MemberRepository;
 import com.milkcow.tripai.security.filter.CustomAuthenticationFilter;
 import com.milkcow.tripai.security.filter.CustomAuthenticationProvider;
 import com.milkcow.tripai.security.filter.CustomAuthorizationFilter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -23,6 +24,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 /**
@@ -65,6 +69,9 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .httpBasic().disable() // httpBasic 사용 X
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and()
@@ -72,6 +79,7 @@ public class SecurityConfig {
                 .antMatchers("/signup/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/reissue").permitAll()
+                .antMatchers("/aws").permitAll()
                 .antMatchers("/v2/api-docs", "/swagger-resources", "/swagger-resources/**",
                         "/configuration/ui", "/configuration/security", "/swagger-ui.html", "/webjars/**",
                         "/v3/api-docs/**", "/swagger-ui/**").permitAll()
@@ -139,5 +147,26 @@ public class SecurityConfig {
         return customAuthenticationFilter;
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
 
+        config.setAllowedOrigins(
+                List.of("http://localhost:8080", "http://localhost:3000")
+        );
+        config.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+        );
+        config.setAllowedHeaders(
+                List.of("*")
+        );
+        config.setExposedHeaders(
+                List.of("Authorization")
+        );
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }
