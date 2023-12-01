@@ -7,6 +7,8 @@ import com.milkcow.tripai.plan.dto.attraction.AttractionPlanDto;
 import com.milkcow.tripai.plan.dto.flight.FlightPlanDto;
 import com.milkcow.tripai.plan.dto.restaurant.RestaurantPlanDto;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +25,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class PlanResponseDto {
+
+    @ApiParam(value = "여행일정 ID")
+    @Schema(description = "조회된 여행일정 ID", example = "1")
+    private final Long planId;
+
     @ApiModelProperty(value = "여행지", example = "도쿄")
     private final String name;
 
