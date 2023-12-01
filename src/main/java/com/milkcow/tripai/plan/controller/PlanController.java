@@ -3,6 +3,7 @@ package com.milkcow.tripai.plan.controller;
 import com.milkcow.tripai.global.dto.DataResponse;
 import com.milkcow.tripai.global.dto.ResponseDto;
 import com.milkcow.tripai.member.domain.Member;
+import com.milkcow.tripai.plan.dto.PlanPageResponseDto;
 import com.milkcow.tripai.plan.dto.PlanRequestDto;
 import com.milkcow.tripai.plan.dto.PlanResponseDto;
 import com.milkcow.tripai.plan.result.PlanResult;
@@ -16,6 +17,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,8 +48,9 @@ public class PlanController {
 
     /**
      * 예산 기반 일정 등록
+     *
      * @param userDetails {@link CustomUserDetails} 사용자 정보
-     * @param planDto {@link PlanRequestDto} 예산 기반 일정 정보
+     * @param planDto     {@link PlanRequestDto} 예산 기반 일정 정보
      * @return HttpStatus.CREATED
      */
     @ApiOperation(value = "예산 기반 일정 등록", notes = "예산 기반 일정 등록 API")
@@ -71,8 +76,9 @@ public class PlanController {
 
     /**
      * 예산 기반 일정 개별 조회
+     *
      * @param userDetails {@link CustomUserDetails} 사용자 정보
-     * @param planId 해당 일정의 id
+     * @param planId      해당 일정의 id
      * @return {@link PlanResponseDto} 일정 정보
      */
     @ApiOperation(value = "예산 기반 일정 조회", notes = "예산 기반 일정 조회 API")
@@ -98,8 +104,9 @@ public class PlanController {
 
     /**
      * 예산 기반 일정 삭제
+     *
      * @param userDetails {@link CustomUserDetails} 사용자 정보
-     * @param planId 해당 일정 id
+     * @param planId      해당 일정 id
      * @return HttpStatus.OK
      */
     @ApiOperation(value = "예산 기반 일정 삭제", notes = "예산 기반 일정 삭제 API")
@@ -123,4 +130,30 @@ public class PlanController {
 
         return ResponseDto.of(true, PlanResult.OK_PLAN_DELETE);
     }
+
+    @GetMapping("/users/plan")
+    @ApiOperation(value = "내가 작성한 여행일정 목록 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNumber", value = "조회할 페이지 (0부터 시작)", example = "0", paramType = "query", dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "pageSize", value = "한 페이지에 조회할 개수", example = "10", paramType = "query", dataTypeClass = Integer.class)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "게시글 조회 성공"),
+            @ApiResponse(code = 500, message = "서버 내 오류")
+    })
+    public DataResponse<PlanPageResponseDto> getPage(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestParam(defaultValue = "0") Integer pageNumber,
+                                                     @RequestParam(defaultValue = "10") Integer pageSize) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
+                userDetails.getUsername());
+        Member member = customUserDetails.getMember();
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDate").descending());
+
+        PlanPageResponseDto response = planService.getPage(pageRequest, member);
+
+        return DataResponse.create(response);
+    }
+
+
 }
