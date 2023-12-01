@@ -33,7 +33,7 @@ jobs:
         run: touch application.yml  # 비어있는 yml 파일 하나 생성
 
       - name: secrets에 있는 APPLICATION 내용을 yml 파일에 덮어쓰기
-        run: echo "${{secrets.PROPERTIES}}" > ./src/main/resources/application.yml   # APPLICATION에 있는 내용 저 경로에 추가
+        run: echo "${{secrets.APPLICATION}}" > ./src/main/resources/application.yml   # APPLICATION에 있는 내용 저 경로에 추가
 
       - name: yml 파일 다운받을 수 있게 업로드
         uses: actions/upload-artifact@v3.1.2
@@ -78,5 +78,5 @@ jobs:
           --deployment-group-name TripAi
           --s3-location bucket=tripai-cicd-bucket,bundleType=zip,key=spring-build.zip
 
-            
-            
+
+
