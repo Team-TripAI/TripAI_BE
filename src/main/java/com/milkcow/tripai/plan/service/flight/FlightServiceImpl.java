@@ -53,12 +53,17 @@ public class FlightServiceImpl implements FlightService {
             HttpEntity<JSONObject> requestEntity = new HttpEntity<>(headers);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+
             if (response.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanSearchResult.FLIGHT_API_REQUEST_FAILED);
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode responseBody = objectMapper.readTree(response.getBody());
+
+            if (!responseBody.get("status").asBoolean()) {
+                throw new PlanException(PlanSearchResult.FLIGHT_API_REQUEST_FAILED);
+            }
 
             JsonNode flightListJson = responseBody.path("data").path("flights");
 
@@ -91,7 +96,8 @@ public class FlightServiceImpl implements FlightService {
      * @param maxFare          최대 항공비
      * @return {@link FlightSearchData}
      */
-    private static Optional<FlightSearchData> parseFlightData(JsonNode flight, String departureAirport, String arrivalAirport,
+    private static Optional<FlightSearchData> parseFlightData(JsonNode flight, String departureAirport,
+                                                              String arrivalAirport,
                                                               String departureDate,
                                                               int maxFare) {
         int fare = flight.path("purchaseLinks").path(0).get("totalPrice").asInt();
