@@ -53,6 +53,7 @@ public class AccommodationServiceImpl implements AccommodationService {
             ResponseEntity<String> destinationResponse = restTemplate.exchange(searchDestinationUrl, HttpMethod.GET,
                     requestEntity,
                     String.class);
+
             if (destinationResponse.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanSearchResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
             }
@@ -65,10 +66,12 @@ public class AccommodationServiceImpl implements AccommodationService {
 
             ResponseEntity<String> hotelResponse = restTemplate.exchange(hotelURL, HttpMethod.GET, requestEntity,
                     String.class);
+
             if (destinationResponse.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanSearchResult.ACCOMMODATION_SEARCH_API_REQUEST_FAILED);
             }
             JsonNode accommodationJson = objectMapper.readTree(hotelResponse.getBody());
+
             if (!accommodationJson.get("status").asBoolean()) {
                 throw new PlanException(PlanSearchResult.ACCOMMODATION_DESTINATION_API_REQUEST_FAILED);
             }
@@ -93,12 +96,14 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     /**
      * 숙박정보 Json을 객체로 파싱
+     *
      * @param accommodation Json
-     * @param startDate 숙박 시작일(yyyy-MM-dd 형식)
-     * @param endDate 숙박 종료일(yyyy-MM-dd 형식)
+     * @param startDate     숙박 시작일(yyyy-MM-dd 형식)
+     * @param endDate       숙박 종료일(yyyy-MM-dd 형식)
      * @return AccommodationData {@link AccommodationSearchData}
      */
-    private static AccommodationSearchData parseAccommodationData(JsonNode accommodation, String startDate, String endDate) {
+    private static AccommodationSearchData parseAccommodationData(JsonNode accommodation, String startDate,
+                                                                  String endDate) {
 
         String name = accommodation.path("property").get("name").asText();
         double lat = accommodation.path("property").get("latitude").asDouble();
@@ -124,6 +129,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     /**
      * 헤더 설정
+     *
      * @return {@link HttpHeaders}
      */
     private HttpHeaders setHeaders() {
@@ -136,6 +142,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     /**
      * 목적지 id를 얻기 위한 API URL 설정
+     *
      * @param destination 목적지
      * @return 목적지 id API URL
      */
@@ -145,10 +152,11 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     /**
      * 호텔 정보를 얻기 위한 API URL 설정
-     * @param destId 목적지 id
+     *
+     * @param destId    목적지 id
      * @param startDate 숙박 시작일
-     * @param endDate 숙박 종료일
-     * @param maxPrice 총 여행기간 중 숙박비
+     * @param endDate   숙박 종료일
+     * @param maxPrice  총 여행기간 중 숙박비
      * @return 호텔 정보 API URL
      */
     private String setHotelURL(long destId, String startDate, String endDate, int maxPrice) {
