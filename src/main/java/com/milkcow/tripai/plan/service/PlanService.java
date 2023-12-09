@@ -78,6 +78,8 @@ public class PlanService {
     public PlanPageResponseDto getPage(PageRequest pageRequest, Member member) {
 
         final Page<Plan> planPage = planRepository.findAllByMember(pageRequest, member);
+        if (planPage.isEmpty())
+            throw new PlanException(PlanResult.PLAN_NOT_FOUND);
 
         return PlanPageResponseDto.toDto(planPage);
     }

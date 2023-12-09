@@ -41,3 +41,5 @@ API-keys:
     API-Host: tourist-attraction.p.rapidapi.com
     Typeahead-URL: https://tourist-attraction.p.rapidapi.com/typeahead
     Search-URL: https://tourist-attraction.p.rapidapi.com/search
+OAuth2:
+  Google-Client-Id: 32916786180-nstcqblsgb85inr47tm4lnjstm8dpb96.apps.googleusercontent.com
