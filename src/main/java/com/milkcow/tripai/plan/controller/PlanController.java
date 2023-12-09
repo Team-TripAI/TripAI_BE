@@ -139,6 +139,7 @@ public class PlanController {
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "게시글 조회 성공"),
+            @ApiResponse(code = 404, message = "존재하지 않는 계획"),
             @ApiResponse(code = 500, message = "서버 내 오류")
     })
     public DataResponse<PlanPageResponseDto> getPage(@AuthenticationPrincipal UserDetails userDetails,
@@ -148,7 +149,7 @@ public class PlanController {
                 userDetails.getUsername());
         Member member = customUserDetails.getMember();
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDate").descending());
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("createDateTime").descending());
 
         PlanPageResponseDto response = planService.getPage(pageRequest, member);
 
