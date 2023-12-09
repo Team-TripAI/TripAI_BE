@@ -83,7 +83,7 @@ public class PlanController {
      */
     @ApiOperation(value = "예산 기반 일정 조회", notes = "예산 기반 일정 조회 API")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "조회할 예산기반 일정 ID", readOnly = true, paramType = "query", dataType = "int", example = "1")
+            @ApiImplicitParam(name = "planId", value = "조회할 예산기반 일정 ID", readOnly = true, paramType = "path", dataType = "int", example = "1")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "개별 일정 조회 성공"),
@@ -111,7 +111,7 @@ public class PlanController {
      */
     @ApiOperation(value = "예산 기반 일정 삭제", notes = "예산 기반 일정 삭제 API")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "조회할 예산기반 일정 ID", readOnly = true, paramType = "query", dataType = "int", example = "1")
+            @ApiImplicitParam(name = "planId", value = "조회할 예산기반 일정 ID", readOnly = true, paramType = "path", dataType = "int", example = "1")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "일정 삭제 성공"),

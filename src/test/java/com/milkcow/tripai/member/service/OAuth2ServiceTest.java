@@ -28,9 +28,9 @@ class OAuth2ServiceTest {
         //when
         oAuth2Service.oAuth2Login(token, response);
         //then
-        Member member = memberRepository.findByEmail("junjuns1s1s@gmail.com").get();
+        Member member = memberRepository.findByEmail("0902hdy@gmail.com").get();
         System.out.println("member.getNickname() = " + member.getNickname());
-        assertThat(member.getEmail()).isEqualTo("junjuns1s1s@gmail.com");
+        assertThat(member.getEmail()).isEqualTo("0902hdy@gmail.com");
     }
     @Test
     public void 구글_로그인() throws Exception{

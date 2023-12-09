@@ -40,7 +40,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     private String APIHOST;
 
     @Override
-    public RestaurantSearchResponseDto getRestaurantData(String destination, String startDate, String endDate, int maxPrice) {
+    public RestaurantSearchResponseDto getRestaurantData(String destination, String startDate, String endDate,
+                                                         int maxPrice) {
         try {
             long duration = DateUtil.calculateDuration(startDate, endDate);
             PriceRange priceRange = PriceRange.of((int) (maxPrice / duration));
@@ -57,6 +58,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             ResponseEntity<String> typeaheadResponse = restTemplate.exchange(SEARCH_DESTINATION_URL, HttpMethod.POST,
                     typeaheadRequestEntity,
                     String.class);
+
             if (typeaheadResponse.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanSearchResult.RESTAURANT_DESTINATION_API_REQUEST_FAILED);
             }
@@ -73,10 +75,15 @@ public class RestaurantServiceImpl implements RestaurantService {
             ResponseEntity<String> restaurantResponse = restTemplate.exchange(SEARCH_RESTAURANT_URL, HttpMethod.POST,
                     restaurantRequestEntity,
                     String.class);
+
             if (restaurantResponse.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanSearchResult.RESTAURANT_SEARCH_API_REQUEST_FAILED);
             }
             JsonNode restaurantJson = objectMapper.readTree(restaurantResponse.getBody());
+
+            if (restaurantJson.get("status").asInt() != 200) {
+                throw new PlanException(PlanSearchResult.RESTAURANT_SEARCH_API_REQUEST_FAILED);
+            }
             JsonNode restaurantList = restaurantJson.path("results").path("data");
 
             for (JsonNode r : restaurantList) {

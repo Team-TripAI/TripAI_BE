@@ -57,6 +57,7 @@ public class AttractionServiceImpl implements AttractionService {
 
             ResponseEntity<String> typeaheadResponse = restTemplate.exchange(SEARCH_DESTINATION_URL, HttpMethod.POST,
                     typeaheadRequestEntity, String.class);
+
             if (typeaheadResponse.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanSearchResult.ATTRACTION_DESTINATION_API_REQUEST_FAILED);
             }
@@ -72,10 +73,15 @@ public class AttractionServiceImpl implements AttractionService {
 
             ResponseEntity<String> attractionResponse = restTemplate.exchange(SEARCH_ATTRACTION_URL, HttpMethod.POST,
                     attractionRequestEntity, String.class);
+
             if (attractionResponse.getStatusCode() != HttpStatus.OK) {
                 throw new PlanException(PlanSearchResult.ATTRACTION_SEARCH_API_REQUEST_FAILED);
             }
             JsonNode attractionJson = objectMapper.readTree(attractionResponse.getBody());
+
+            if (attractionJson.get("status").asInt() != 200) {
+                throw new PlanException(PlanSearchResult.ATTRACTION_SEARCH_API_REQUEST_FAILED);
+            }
             JsonNode attractionList = attractionJson.path("results").path("data");
 
             for (JsonNode a : attractionList) {
