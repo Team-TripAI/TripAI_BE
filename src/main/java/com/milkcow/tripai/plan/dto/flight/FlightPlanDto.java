@@ -41,18 +41,14 @@ public class FlightPlanDto {
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
 
-    @ApiModelProperty(value = "예약 url", example = "https://www.tripadvisor.com/CheapFlightsPartnerHandoff?searchHash=3a43bb45deca656b05417e46cead30e9&provider=SkyScanner|1|36&area=FLTCenterColumn|0|1|ItinList|2|Meta_ItineraryPrice&resultsServlet=CheapFlightsSearchResults&handoffPlatform=desktop&impressionId=&totalPricePerPassenger=873900.06")
-    private String url;
-
     public FlightPlanDto(String name, String airline, String departureAirport, String arrivalAirport,
-                         LocalDateTime startTime, LocalDateTime endTime, String url) {
+                         LocalDateTime startTime, LocalDateTime endTime) {
         this.name = name;
         this.airline = airline;
         this.departureAirport = departureAirport;
         this.arrivalAirport = arrivalAirport;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.url = url;
     }
 
     public static FlightPlanDto toDto(FlightPlan flightPlan) {
@@ -61,8 +57,7 @@ public class FlightPlanDto {
                 flightPlan.getDepartureAirport(),
                 flightPlan.getArrivalAirport(),
                 flightPlan.getStartTime(),
-                flightPlan.getEndTime(),
-                flightPlan.getUrl());
+                flightPlan.getEndTime());
     }
 
     public static FlightPlan toEntity(FlightPlanDto dto, Plan plan) {
@@ -74,7 +69,6 @@ public class FlightPlanDto {
                 .arrivalAirport(dto.arrivalAirport)
                 .startTime(dto.startTime)
                 .endTime(dto.endTime)
-                .url(dto.url)
                 .build();
     }
 }

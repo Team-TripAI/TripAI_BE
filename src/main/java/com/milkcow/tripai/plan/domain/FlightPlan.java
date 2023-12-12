@@ -3,7 +3,6 @@ package com.milkcow.tripai.plan.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,7 +44,4 @@ public class FlightPlan {
     @NotNull
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
-    @NotNull
-    @Column(length = 350)
-    private String url;
 }
