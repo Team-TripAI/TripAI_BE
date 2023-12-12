@@ -158,7 +158,7 @@ public class FlightServiceImpl implements FlightService {
      * @return 항공권 정보 AIP URL
      */
     private String setURL(String departureAirport, String arrivalAirport, String departureDate) {
-        String url = this.BASE_URL
+        return this.BASE_URL
                 + "?fromId=" + URLEncoder.encode(departureAirport, StandardCharsets.UTF_8)
                 + "&toId=" + URLEncoder.encode(arrivalAirport, StandardCharsets.UTF_8)
                 + "&departDate=" + URLEncoder.encode(departureDate, StandardCharsets.UTF_8)
@@ -167,8 +167,6 @@ public class FlightServiceImpl implements FlightService {
                 + "&sort=BEST"
                 + "&cabinClass=ECONOMY"
                 + "&currency_code=" + "KRW";
-
-        return url;
     }
 
 }
