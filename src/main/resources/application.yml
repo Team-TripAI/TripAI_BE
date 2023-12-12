@@ -8,7 +8,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate.format_sql: true
@@ -36,6 +36,7 @@ API-keys:
     API-Host: booking-com15.p.rapidapi.com
     SearchHotelDestination-URL: https://booking-com15.p.rapidapi.com/api/v1/hotels/searchDestination
     SearchHotels-URL: https://booking-com15.p.rapidapi.com/api/v1/hotels/searchHotels
+    SearchFlights-URL: https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights
   Tourist-Attraction:
     API-Key: 8232d37af9mshbab18624a9b281ep13cb24jsn6c5477f7c3be
     API-Host: tourist-attraction.p.rapidapi.com
