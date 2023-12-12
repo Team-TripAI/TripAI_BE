@@ -30,12 +30,14 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FlightServiceImpl implements FlightService {
 
-    @Value("${API-keys.TripAdvisor.SearchFlights-URL}")
+    @Value("${API-keys.Booking.SearchFlights-URL}")
     private String BASE_URL;
-    @Value("${API-keys.TripAdvisor.API-Key}")
+    @Value("${API-keys.Booking.API-Key}")
     private String APIKEY;
-    @Value("${API-keys.TripAdvisor.API-Host}")
+    @Value("${API-keys.Booking.API-Host}")
     private String APIHOST;
+
+    private static final String BOOKING_POSTFIX = ".AIRPORT";
 
     @Override
     public FlightSearchResponseDto getFlightData(String departureAirport, String arrivalAirport, String departureDate,
@@ -48,7 +50,9 @@ public class FlightServiceImpl implements FlightService {
             HttpHeaders headers = setHeader();
 
             // payload 설정
-            String url = setURL(departureAirport, arrivalAirport, departureDate);
+            String url = setURL(departureAirport + BOOKING_POSTFIX,
+                    arrivalAirport + BOOKING_POSTFIX,
+                    departureDate);
 
             HttpEntity<JSONObject> requestEntity = new HttpEntity<>(headers);
 
@@ -65,7 +69,7 @@ public class FlightServiceImpl implements FlightService {
                 throw new PlanException(PlanSearchResult.FLIGHT_API_REQUEST_FAILED);
             }
 
-            JsonNode flightListJson = responseBody.path("data").path("flights");
+            JsonNode flightListJson = responseBody.path("data").path("flightOffers");
 
             for (JsonNode flight : flightListJson) {
                 Optional<FlightSearchData> flightData = parseFlightData(flight, departureAirport, arrivalAirport,
@@ -100,21 +104,21 @@ public class FlightServiceImpl implements FlightService {
                                                               String arrivalAirport,
                                                               String departureDate,
                                                               int maxFare) {
-        int fare = flight.path("purchaseLinks").path(0).get("totalPrice").asInt();
+        int fare = flight.path("priceBreakdown").path("total").get("units").asInt();
 
         if (fare > maxFare) {
             return Optional.empty();
         }
 
-        String url = flight.path("purchaseLinks").path(0).get("url").asText();
-        JsonNode schedule = flight.path("segments").path(0).path("legs").path(0);
-        String airline = schedule.get("marketingCarrierCode").asText();
-        String flightNumber = schedule.get("flightNumber").asText();
+        JsonNode schedule = flight.path("segments").path(0);
+        String airline = schedule.get("legs").get(0).get("flightInfo").get("carrierInfo").get("operatingCarrier")
+                .asText();
+        String flightNumber = schedule.get("legs").get(0).get("flightInfo").get("flightNumber").asText();
         String flightId = airline + flightNumber;
 
-        String[] departureDateTime = schedule.get("departureDateTime").asText().split("T");
+        String[] departureDateTime = schedule.get("departureTime").asText().split("T");
         String departureTime = departureDateTime[1];
-        String[] arrivalDateTime = schedule.get("arrivalDateTime").asText().split("T");
+        String[] arrivalDateTime = schedule.get("arrivalTime").asText().split("T");
         String arrivalDate = arrivalDateTime[0];
         String arrivalTime = arrivalDateTime[1];
 
@@ -128,7 +132,6 @@ public class FlightServiceImpl implements FlightService {
                 .arrivalTime(arrivalTime)
                 .airline(airline)
                 .fare(fare)
-                .url(url)
                 .build();
         return Optional.of(flightSearchData);
     }
@@ -156,17 +159,14 @@ public class FlightServiceImpl implements FlightService {
      */
     private String setURL(String departureAirport, String arrivalAirport, String departureDate) {
         String url = this.BASE_URL
-                + "?sourceAirportCode=" + URLEncoder.encode(departureAirport, StandardCharsets.UTF_8)
-                + "&destinationAirportCode=" + URLEncoder.encode(arrivalAirport, StandardCharsets.UTF_8)
-                + "&date=" + URLEncoder.encode(departureDate, StandardCharsets.UTF_8)
-                + "&itineraryType=" + "ONE_WAY"
-                + "&sortOrder=" + "PRICE"
-                + "&numAdults=" + "1"
-                + "&numSeniors=" + "0"
-                + "&classOfService=" + "ECONOMY"
-                + "&pageNumber=" + "1"
-                + "&nonstop=" + "yes"
-                + "&currencyCode=" + "KRW";
+                + "?fromId=" + URLEncoder.encode(departureAirport, StandardCharsets.UTF_8)
+                + "&toId=" + URLEncoder.encode(arrivalAirport, StandardCharsets.UTF_8)
+                + "&departDate=" + URLEncoder.encode(departureDate, StandardCharsets.UTF_8)
+                + "&pageNo=1"
+                + "&adults=1"
+                + "&sort=BEST"
+                + "&cabinClass=ECONOMY"
+                + "&currency_code=" + "KRW";
 
         return url;
     }
