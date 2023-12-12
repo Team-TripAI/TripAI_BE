@@ -25,8 +25,6 @@ public class FlightSearchData {
     private String arrivalTime;
     @ApiModelProperty(value = "가격", example = "873900")
     private Integer fare;
-    @ApiModelProperty(value = "예약 url", example = "https://www.tripadvisor.com/CheapFlightsPartnerHandoff?searchHash=3a43bb45deca656b05417e46cead30e9&provider=SkyScanner|1|36&area=FLTCenterColumn|0|1|ItinList|2|Meta_ItineraryPrice&resultsServlet=CheapFlightsSearchResults&handoffPlatform=desktop&impressionId=&totalPricePerPassenger=873900.06")
-    private String url;
 
     @Override
     public String toString() {
@@ -40,7 +38,6 @@ public class FlightSearchData {
                 ", departureTime='" + departureTime + '\'' +
                 ", arrivalTime='" + arrivalTime + '\'' +
                 ", fare=" + fare +
-                ", url='" + url + '\'' +
                 '}';
     }
 }
