@@ -4,9 +4,7 @@ import static com.milkcow.tripai.jwt.AccessTokenProvider.AUTHORITIES_KEY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.milkcow.tripai.global.exception.GeneralException;
 import com.milkcow.tripai.global.exception.JwtException;
 import com.milkcow.tripai.global.result.ApiResult;
@@ -16,6 +14,7 @@ import com.milkcow.tripai.member.exception.MemberException;
 import com.milkcow.tripai.member.repository.MemberRepository;
 import com.milkcow.tripai.member.result.MemberResult;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Arrays;
@@ -50,7 +49,10 @@ public class JwtService {
     private String ACCESS_HEADER;
 
     @Value("${jwt.secret}")
-    private String SECRET;
+    private String ACCESS_SECRET;
+
+    @Value("${jwt.refresh-token-secret}")
+    private String REFRESH_SECRET;
 
     private static final String REFRESH_HEADER = "Authorization_refresh";
 
@@ -219,12 +221,17 @@ public class JwtService {
     public void reissue(HttpServletResponse response, String email, Long id, String refreshToken) {
 
         // === Refresh Token 유효성 검사 === //
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC512(SECRET)).build();
-        DecodedJWT decodedJWT = verifier.verify(refreshToken);
+//        JWTVerifier verifier = JWT.require(Algorithm.HMAC512(refreshTokenProvider.key.toString())).build();
+//        DecodedJWT decodedJWT = verifier.verify(refreshToken);
+
+        Jws<Claims> decodedJWT = Jwts.parserBuilder()
+                .setSigningKey(refreshTokenProvider.key)
+                .build()
+                .parseClaimsJws(refreshToken);
 
         // === Access Token 재발급 === //
         long now = System.currentTimeMillis();
-        String subject = decodedJWT.getSubject();
+        String subject = decodedJWT.getBody().getSubject();
         Member member = memberRepository.findByEmail(subject)
                 .orElseThrow(() -> new MemberException(MemberResult.NOT_FOUND_MEMBER));
         if (!member.getRefreshToken().equals(refreshToken)) {
@@ -234,7 +241,7 @@ public class JwtService {
 
         // === 현재시간과 Refresh Token 만료날짜를 통해 남은 만료기간 계산 === //
         // === Refresh Token 만료시간 계산해 5분 미만일 시 refresh token도 발급 === //
-        long refreshExpireTime = decodedJWT.getClaim("exp").asLong() * 1000;
+        long refreshExpireTime = decodedJWT.getBody().getExpiration().getTime() * 1000;
         long diffMin = (refreshExpireTime - now) / 1000 / 60;
         if (diffMin < 5) {
             String newRefreshToken = createRefreshToken(email);
