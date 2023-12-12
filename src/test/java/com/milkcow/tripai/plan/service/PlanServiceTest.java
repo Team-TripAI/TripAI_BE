@@ -117,8 +117,7 @@ class PlanServiceTest {
                 "ICN",
                 "LAX",
                 LocalDateTime.of(2023, 12, 25, 13, 30),
-                LocalDateTime.of(2023, 12, 25, 7, 20),
-                "https://www.tripadvisor.com/CheapFlightsPartnerHandoff?searchHash=3a43bb45deca656b05417e46cead30e9&provider=SkyScanner|1|36&area=FLTCenterColumn|0|1|ItinList|2|Meta_ItineraryPrice&resultsServlet=CheapFlightsSearchResults&handoffPlatform=desktop&impressionId=&totalPricePerPassenger=873900.06");
+                LocalDateTime.of(2023, 12, 25, 7, 20));
 
         RestaurantPlanDto restaurantPlanDto = new RestaurantPlanDto(
                 "Gyopao Gyoza Roppongi",
